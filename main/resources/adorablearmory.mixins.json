@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "flu.kitten.adorablearmory.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "adorablearmory.refmap.json",
+  "mixins": [
+    "AdorableArmoryMixins$ItemEntityAccessor",
+    "AdorableArmoryMixins$LivingEntityMixin",
+    "AdorableArmoryMixins$MixinEntity",
+    "AdorableArmoryMixins$MixinItemEntity",
+    "ItemRendererMixin"
+  ],
+
+  "client": [
+  ],
+
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

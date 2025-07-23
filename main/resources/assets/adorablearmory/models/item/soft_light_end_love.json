@@ -1,0 +1,10 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "adorablearmory:item/soft_light_end_love"
+  },
+  "loader": "adorablearmory:cosmic",
+  "cosmic": {
+    "mask": "adorablearmory:item/soft_light_end_love_sword_mask"
+  }
+}

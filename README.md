@@ -18,3 +18,5 @@
 * **ScarletLoraAlysia(Entity):** 一个Boss实体。(目前正在制作)
 * *还有更多...*
 * ... 未来计划稍不明确QwQ。
+
+AdorableArmory正在缓慢制作中...QwQ

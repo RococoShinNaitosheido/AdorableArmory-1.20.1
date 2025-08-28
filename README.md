@@ -1,4 +1,4 @@
-![AdorableArmory Logo](./logo.png)
+![AdorableArmory Logo](./adorablearmory_logo.png)
 # AdorableArmory-1.20.1
 * 模组名称：**AdorableArmory**
 * 版本：**Forge-1.20.1**

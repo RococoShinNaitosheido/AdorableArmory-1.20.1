@@ -11,5 +11,5 @@
 * **SparklingDreamIdolStar(Item):** 一个普通的模组logo物品。
 * **SoftLightEndLove(SwordItem):** 一把粉色剑。
 * **Lola(Block):** 一个方块。
-* **ScarletLoraAlysia(Entity):** 一个Boss实体。(目前制作制作)
+* **ScarletLoraAlysia(Entity):** 一个Boss实体。(目前正在制作)
 ... 未来计划稍不明确QwQ()

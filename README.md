@@ -1,6 +1,6 @@
 # AdorableArmory-1.20.1
 模组名称：**AdorableArmory**
-版本：1.20.1
+版本：Forge-1.20.1
 作者：[RococoShin]
 
 ### 模组简介
@@ -12,4 +12,5 @@
 * **SoftLightEndLove(SwordItem):** 一把粉色剑。
 * **Lola(Block):** 一个方块。
 * **ScarletLoraAlysia(Entity):** 一个Boss实体。(目前正在制作)
+*还有更多*
 ... 未来计划稍不明确QwQ()

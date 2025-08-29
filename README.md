@@ -2,7 +2,7 @@
   <img src="./adorablearmory_logo.png" alt="AdorableArmory Logo"/>
 </p>
 
-# AdorableArmory-1.20.1
+# AdorableArmory-1.20.1(上一次更新2025/07/23)
 * 模组名称：**AdorableArmory**
 * 版本：**Forge-1.20.1**
 * 作者：[**RococoShin**]

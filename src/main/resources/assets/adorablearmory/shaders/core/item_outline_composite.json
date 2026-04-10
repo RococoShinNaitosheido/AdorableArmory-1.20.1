@@ -1,0 +1,29 @@
+{
+  "blend": {
+    "func": "add",
+    "srcrgb": "srcalpha",
+    "dstrgb": "1-srcalpha"
+  },
+
+  "vertex": "adorablearmory:item_outline_composite",
+  "fragment": "adorablearmory:item_outline_composite",
+
+  "attributes": [
+    "Position",
+    "UV0"
+  ],
+
+  "samplers": [
+    { "name": "OutlineSampler" },
+    { "name": "OutlineDepthSampler" },
+    { "name": "MainDepthSampler" }
+  ],
+
+  "uniforms": [
+    { "name": "AlphaThreshold", "type": "float", "count": 1, "values": [ 0.01 ] },
+    { "name": "MaxSearchRadius", "type": "float", "count": 1, "values": [ 8.0 ] },
+    { "name": "DepthEpsilon", "type": "float", "count": 1, "values": [ 0.00025 ] },
+    { "name": "EnableDepthOcclusion", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "UseFirstPersonHandFastPath", "type": "float", "count": 1, "values": [ 0.0 ] }
+  ]
+}

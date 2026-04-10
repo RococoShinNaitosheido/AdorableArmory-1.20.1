@@ -1,0 +1,7 @@
+{
+  "parent": "adorablearmory:block/lola",
+  "loader": "adorablearmory:cosmic",
+  "cosmic": {
+    "mask": "adorablearmory:item/block_mask"
+  }
+}

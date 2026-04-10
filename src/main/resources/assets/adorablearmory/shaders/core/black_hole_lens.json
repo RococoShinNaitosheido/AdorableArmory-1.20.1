@@ -1,0 +1,28 @@
+{
+  "vertex": "adorablearmory:black_hole_lens",
+  "fragment": "adorablearmory:black_hole_lens",
+  "attributes": [ "Position", "UV0" ],
+
+  "samplers": [
+    { "name": "SceneTex" }
+  ],
+
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 ] },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 ] },
+
+    { "name": "ScreenSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+    { "name": "CenterPx",   "type": "float", "count": 2, "values": [ 0.0, 0.0 ] },
+    { "name": "RadiusPx",   "type": "float", "count": 1, "values": [ 64.0 ] },
+    { "name": "StrengthPx", "type": "float", "count": 1, "values": [ 32.0 ] },
+
+    { "name": "SofteningPx",    "type": "float", "count": 1, "values": [ 16.0 ] },
+    { "name": "RingRadiusPx",   "type": "float", "count": 1, "values": [ 48.0 ] },
+    { "name": "RingWidthPx",    "type": "float", "count": 1, "values": [ 6.0 ] },
+    { "name": "RingStrengthPx", "type": "float", "count": 1, "values": [ 18.0 ] },
+    { "name": "RingTwistPx",    "type": "float", "count": 1, "values": [ 8.0 ] },
+    { "name": "DispersionPx",   "type": "float", "count": 1, "values": [ 4.0 ] },
+
+    { "name": "LensDepth01", "type": "float", "count": 1, "values": [ 0.5 ] }
+  ]
+}

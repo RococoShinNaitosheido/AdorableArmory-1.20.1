@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "adorablearmory:item/soft_light_end_love"
+  }
+}

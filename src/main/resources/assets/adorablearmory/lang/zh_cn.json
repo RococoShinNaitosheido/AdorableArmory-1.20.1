@@ -1,0 +1,17 @@
+{
+  "item.adorablearmory.sparkling_dream_idol_star.name": "",
+  "item.adorablearmory.soft_light_end_love": "薄暮恋刃(测试)",
+  "item.adorablearmory.scarlet_lora_alysia_egg": "斯卡蕾特·萝拉·艾莉米娅刷怪蛋",
+  "item.adorablearmory.true_demon_arrow": "真魔之箭",
+  "item.adorablearmory.true_demon_bow": "真魔之弓",
+  "block.adorablearmory.lola": "LolaBlock",
+  "entity.adorablearmory.scarlet_lora_alysia": "斯卡蕾特·萝拉·艾莉米娅",
+  "itemGroup.adorablearmory_tab": "AdorableArmory",
+
+  "death.attack.true_demon": "%1$s被%2$s杀了！",
+  "death.attack.true_demon.player": "%1$s被%2$s的%3$s杀了！",
+  "message.adorablearmory.healing_blocked": "§c(测试)真魔灼烧着你体内的生命...无法疗愈...%s ",
+
+  "sparkling_dream_idol_star.cn": "可爱的军械库",
+  "sparkling_dream_idol_star.en": "AdorableArmory"
+}

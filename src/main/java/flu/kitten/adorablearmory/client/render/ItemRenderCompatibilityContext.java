@@ -1,18 +1,24 @@
 package flu.kitten.adorablearmory.client.render;
 
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.item.ItemDisplayContext;
+
 import javax.annotation.Nullable;
 
 public final class ItemRenderCompatibilityContext {
 
     private enum Phase {
         NORMAL,
-        OUTLINE_CAPTURE
+        OUTLINE_CAPTURE,
+        MANUAL_GLINT_PASS
     }
 
     private static final class State {
         private int renderDepth;
         private boolean outlineRenderedThisCall;
         @Nullable private Integer glintColor;
+        @Nullable private RenderType suppressedGlintRenderType;
+        private ItemDisplayContext displayContext = ItemDisplayContext.NONE;
         private Phase phase = Phase.NORMAL;
     }
 
@@ -32,14 +38,17 @@ public final class ItemRenderCompatibilityContext {
         return STATE.get();
     }
 
-    public static void beginItemRender() {
+    public static void beginItemRender(ItemDisplayContext context) {
         State state = getOrCreateState();
         if (state.renderDepth == 0) {
             state.outlineRenderedThisCall = false;
             state.glintColor = null;
+            state.suppressedGlintRenderType = null;
+            state.displayContext = context;
             state.phase = Phase.NORMAL;
         }
         state.renderDepth++;
+        state.displayContext = context;
     }
 
     public static void setGlintColor(@Nullable Integer argb) {
@@ -48,6 +57,14 @@ public final class ItemRenderCompatibilityContext {
             return;
         }
         state.glintColor = argb;
+    }
+
+    public static ItemDisplayContext currentDisplayContext() {
+        State state = getState();
+        if (state == null || state.renderDepth <= 0) {
+            return ItemDisplayContext.NONE;
+        }
+        return state.displayContext;
     }
 
     @Nullable
@@ -82,6 +99,42 @@ public final class ItemRenderCompatibilityContext {
             return;
         }
         state.phase = Phase.NORMAL;
+    }
+
+    public static void beginManualGlintPass() {
+        State state = getState();
+        if (state == null || state.renderDepth <= 0) {
+            return;
+        }
+        state.phase = Phase.MANUAL_GLINT_PASS;
+    }
+
+    public static void finishManualGlintPass() {
+        State state = getState();
+        if (state == null || state.renderDepth <= 0) {
+            return;
+        }
+        state.phase = Phase.NORMAL;
+    }
+
+    public static void captureSuppressedGlintRenderType(RenderType type) {
+        State state = getState();
+        if (state == null || state.renderDepth <= 0) {
+            return;
+        }
+        if (state.phase != Phase.NORMAL) {
+            return;
+        }
+        state.suppressedGlintRenderType = type;
+    }
+
+    @Nullable
+    public static RenderType currentSuppressedGlintRenderType() {
+        State state = getState();
+        if (state == null || state.renderDepth <= 0) {
+            return null;
+        }
+        return state.suppressedGlintRenderType;
     }
 
     public static void endItemRender() {

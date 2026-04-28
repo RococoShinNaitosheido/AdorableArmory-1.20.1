@@ -147,7 +147,7 @@ public class TrueDemonBowItem extends BowItem implements IItemOutlineItem, IGlin
     public @Nullable ItemOutlineData getItemOutline(ItemStack stack, ItemDisplayContext context) {
         return switch (context) {
             case GUI -> new ItemOutlineData(0xffb755ff, 3);
-            case FIRST_PERSON_LEFT_HAND, FIRST_PERSON_RIGHT_HAND -> new ItemOutlineData(0xffb755ff, 8);
+            case FIRST_PERSON_LEFT_HAND, FIRST_PERSON_RIGHT_HAND -> new ItemOutlineData(0xffb755ff, 6);
             default -> new ItemOutlineData(0xffb755ff, 4);
         };
     }

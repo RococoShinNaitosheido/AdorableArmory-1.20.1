@@ -1,17 +1,5 @@
 #version 150
 
-mat2 mat2_rotate_z(float radians) {
-    return mat2(
-        cos(radians), -sin(radians),
-        sin(radians), cos(radians)
-    );
-}
-
-mat2 rot(float a) {
-    float c = cos(a), s = sin(a);
-    return mat2(c,-s,s,c);
-}
-
 uniform sampler2D Sampler0;
 uniform sampler2D Sampler1;
 uniform float GameTime;
@@ -26,31 +14,20 @@ uniform float RainbowMix; // 0 = 原 COLORS - 1 = 全彩
 in vec4 texProj0;
 out vec4 fragColor;
 
-const vec3 COLORS[16] = vec3[16](
-    vec3(0.045, 0.180, 0.220),
-    vec3(0.025, 0.160, 0.150),
-    vec3(0.055, 0.190, 0.180),
-    vec3(0.075, 0.200, 0.190),
-    vec3(0.095, 0.210, 0.160),
-    vec3(0.085, 0.140, 0.220),
-    vec3(0.120, 0.180, 0.280),
-    vec3(0.140, 0.250, 0.140),
-    vec3(0.160, 0.220, 0.320),
-    vec3(0.150, 0.180, 0.300),
-    vec3(0.200, 0.230, 0.240),
-    vec3(0.110, 0.380, 0.360),
-    vec3(0.280, 0.220, 0.320),
-    vec3(0.080, 0.480, 0.490),
-    vec3(0.320, 0.580, 0.460),
-    vec3(0.140, 0.480, 0.880)
-);
+const vec3 COLORS[16] = vec3[16](vec3(0.045, 0.180, 0.220), vec3(0.025, 0.160, 0.150), vec3(0.055, 0.190, 0.180), vec3(0.075, 0.200, 0.190), vec3(0.095, 0.210, 0.160), vec3(0.085, 0.140, 0.220), vec3(0.120, 0.180, 0.280), vec3(0.140, 0.250, 0.140), vec3(0.160, 0.220, 0.320), vec3(0.150, 0.180, 0.300), vec3(0.200, 0.230, 0.240), vec3(0.110, 0.380, 0.360), vec3(0.280, 0.220, 0.320), vec3(0.080, 0.480, 0.490), vec3(0.320, 0.580, 0.460), vec3(0.140, 0.480, 0.880));
+const mat4 SCALE_TRANSLATE = mat4(0.5, 0.0, 0.0, 0.25, 0.0, 0.5, 0.0, 0.25, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 
-const mat4 SCALE_TRANSLATE = mat4(
-    0.5, 0.0, 0.0, 0.25,
-    0.0, 0.5, 0.0, 0.25,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-);
+mat2 mat2_rotate_z(float radians) {
+    return mat2(
+        cos(radians), -sin(radians),
+        sin(radians), cos(radians)
+    );
+}
+
+mat2 rot(float a) {
+    float c = cos(a), s = sin(a);
+    return mat2(c,-s,s,c);
+}
 
 // 彩虹
 vec3 rainbow(float h) {
@@ -107,7 +84,6 @@ void main(){
         if (coord.w > 0.0) {
             vec3 Sample = textureProj(Sampler1, coord).rgb;
 
-            // 层 Hue 偏移 - 每层 0.08 位差
             vec2 layerUV = coord.xy / coord.w;
             float h = baseHue + float(i) * 0.08 + dot(layerUV, vec2(0.5)) * RainbowScale * 0.25;
             vec3 rb = rainbow(h);

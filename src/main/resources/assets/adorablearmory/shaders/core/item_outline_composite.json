@@ -22,7 +22,7 @@
   "uniforms": [
     { "name": "AlphaThreshold", "type": "float", "count": 1, "values": [ 0.01 ] },
     { "name": "MaxSearchRadius", "type": "float", "count": 1, "values": [ 8.0 ] },
-    { "name": "DepthEpsilon", "type": "float", "count": 1, "values": [ 0.00025 ] },
+    { "name": "DepthEpsilon", "type": "float", "count": 1, "values": [ 0.001 ] },
     { "name": "EnableDepthOcclusion", "type": "float", "count": 1, "values": [ 1.0 ] },
     { "name": "UseFirstPersonHandFastPath", "type": "float", "count": 1, "values": [ 0.0 ] }
   ]

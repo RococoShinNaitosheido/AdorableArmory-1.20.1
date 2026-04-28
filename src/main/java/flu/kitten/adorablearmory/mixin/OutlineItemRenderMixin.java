@@ -27,6 +27,6 @@ public abstract class OutlineItemRenderMixin {
         if (ItemOutlinePostProcessor.shouldDeferComposite(context)) {
             return;
         }
-        ItemOutlinePostProcessor.compositeItemMaskIfActive();
+        ItemOutlinePostProcessor.compositeItemMaskIfActive(context);
     }
 }

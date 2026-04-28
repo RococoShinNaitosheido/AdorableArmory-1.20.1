@@ -19,7 +19,8 @@
     "RenderBuffersAccessor",
     "RenderTypeInvoker",
     "ItemStackHoverNameMixin",
-    "OutlineItemRenderMixin"
+    "OutlineItemRenderMixin",
+    "ColoredGlintOverlayItemRenderMixin"
   ],
 
   "server": [],

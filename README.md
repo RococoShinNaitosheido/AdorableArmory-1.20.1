@@ -27,3 +27,5 @@
 
 ## 目前兼容部分
 - 描边支持光影模组(Oculus, Embeddium)
+
+目前：RococoShin正在缓慢的制作模组....QwQ

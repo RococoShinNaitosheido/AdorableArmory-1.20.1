@@ -1,31 +1,33 @@
-# AdorableArmory-1.20.1
+# 🌸 <span style="color:#FF6B9D">AdorableArmory-1.20.1</span>
 
-## 目前的东西
-- AdorableArmory
-- LolaBlock(萝拉方块/暂命名，未来可变)
-- 薄暮恋刃(目前只是测试武器，未来是斯卡蕾特·萝拉·艾莉米娅的主要武器)
-- 斯卡蕾特·萝拉·艾莉米娅刷怪蛋(boss刷怪蛋)
-- 真魔之弓(斯卡蕾特·萝拉·艾莉米娅的主要武器)
-- 真魔之箭(真魔之弓的弹药)
-- OrePerspectiveCore(这个是测试物品，目前功能是透视看见地下的任何矿石。未来可完善...)
+###  <span style="color:#4A90E2">版本与环境</span>
+- **Minecraft 版本**：`1.20.1`
+- **模组加载器**：`Forge`
+
+### 🎒 <span style="color:#FFB347">目前的内容</span>
+- `AdorableArmory`（模组核心）
+- `LolaBlock`（萝拉方块 / 暂命名，未来可变）
+- `薄暮恋刃`（目前只是测试武器，未来是 **斯卡蕾特·萝拉·艾莉米娅** 的主要武器）
+- `斯卡蕾特·萝拉·艾莉米娅` 刷怪蛋（Boss 刷怪蛋）
+- `真魔之弓`（斯卡蕾特·萝拉·艾莉米娅的主要武器）
+- `真魔之箭`（真魔之弓的弹药）
+- `OrePerspectiveCore`（测试物品，目前功能是透视看见地下的任何矿石。未来可完善...）
 - 更多的...
 
-## 目前的实体
-- Boss：斯卡蕾特·萝拉·艾莉米娅刷(RococoShin最喜欢的一位Boss，正在非常努力的设计她，目前正在缓慢制作...)
-- 以及一些技术性实体(主要用于Boss的特效和攻击)
+### 👾 <span style="color:#9B59B6">目前的实体</span>
+- **Boss**：`斯卡蕾特·萝拉·艾莉米娅` 刷怪蛋（RococoShin最喜欢的一位Boss，正在非常努力的设计她，目前正在缓慢制作...）
+- 以及一些技术性实体（主要用于Boss的特效和攻击）
 
-## 正在制作的特效和渲染
+### ✨ <span style="color:#2ECC71">正在制作的特效和渲染</span>
 - 一些用于Boss的特效渲染
 
-## 最近更新(2026/04/28)
-- 修复了描边渲染的 bug 和渲染瑕疵
-- 优化了与 Minecraft 光影（Shaders）的一些兼容性
+### 📅 <span style="color:#1ABC9C">最近更新 (2026/04/28)</span>
+- ✅ 修复了描边渲染的 bug 和渲染瑕疵
+- 🎨 优化了与 Minecraft 光影（Shaders）的一些兼容性
 
-## 版本
-- Minecraft 1.20.1
-- Forge
+### 🤝 <span style="color:#3498DB">目前兼容部分</span>
+- 描边支持光影模组：`Oculus`、`Embeddium`
 
-## 目前兼容部分
-- 描边支持光影模组(Oculus, Embeddium)
-
-目前：RococoShin正在缓慢的制作模组....QwQ
+---
+### 💌 <span style="color:#E74C3C">开发者寄语</span>
+> 🌷 RococoShin正在缓慢的制作模组.... QwQ

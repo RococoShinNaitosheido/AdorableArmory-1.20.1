@@ -11,6 +11,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -54,10 +56,23 @@ public final class AdorableArmoryShaders {
         private static final RenderStateShard.WriteMaskStateShard DEPTH_WRITE = RenderStateShard.DEPTH_WRITE;
         private static final RenderStateShard.WriteMaskStateShard COLOR_DEPTH_WRITE = RenderStateShard.COLOR_DEPTH_WRITE;
         private static final RenderStateShard.LayeringStateShard VIEW_OFFSET_Z_LAYERING = RenderStateShard.VIEW_OFFSET_Z_LAYERING;
+        private static final RenderStateShard.LayeringStateShard SHADER_LAYER_DEPTH_BIAS = new RenderStateShard.LayeringStateShard("adorablearmory_shader_layer_depth_bias", () -> {
+            RenderSystem.polygonOffset(-1.0F, -32.0F);
+            RenderSystem.enablePolygonOffset();
+        }, () -> {
+            RenderSystem.polygonOffset(0.0F, 0.0F);
+            RenderSystem.disablePolygonOffset();
+        });
         public static final RenderStateShard.TransparencyStateShard ADDITIVE_TRANSPARENCY = RenderStateShard.ADDITIVE_TRANSPARENCY;
         private static final RenderStateShard.EmptyTextureStateShard NO_TEXTURE = RenderStateShard.NO_TEXTURE;
         private static final RenderStateShard.TransparencyStateShard LIGHTNING_TRANSPARENCY = RenderStateShard.LIGHTNING_TRANSPARENCY;
         private static final RenderStateShard.OutputStateShard MAIN_TARGET = RenderStateShard.MAIN_TARGET;
+        private static final RenderStateShard.EmptyTextureStateShard SKY_ITEM_TEXTURES = new RenderStateShard.EmptyTextureStateShard(() -> {
+            bindShaderTexture(0, END_SKY_LOCATION, false, false);
+            bindShaderTexture(1, END_PORTAL_LOCATION, false, false);
+            bindShaderTexture(3, InventoryMenu.BLOCK_ATLAS, false, false);
+        }, () -> {
+        });
 
         private static final RenderStateShard.OutputStateShard WEATHER_TARGET = new RenderStateShard.OutputStateShard("weather_target", () -> {
             if (Minecraft.useShaderTransparency()) {
@@ -81,6 +96,11 @@ public final class AdorableArmoryShaders {
         public static final RenderStateShard.TransparencyStateShard NO_TRANSPARENCY = RenderStateShard.NO_TRANSPARENCY;
         private static final RenderStateShard.OutputStateShard PARTICLES_TARGET = RenderStateShard.PARTICLES_TARGET;
 
+        private static void bindShaderTexture(int slot, ResourceLocation location, boolean blur, boolean mipmap) {
+            Minecraft.getInstance().getTextureManager().getTexture(location).setFilter(blur, mipmap);
+            RenderSystem.setShaderTexture(slot, location);
+        }
+
         private RenderStateShardAccess(String pName, Runnable pSetupState, Runnable pClearState) {
             super(pName, pSetupState, pClearState);
         }
@@ -92,6 +112,7 @@ public final class AdorableArmoryShaders {
     public static float tick;
     public static float renderFrame;
     public static CCShaderInstance cosmicShader; // cosmic item render
+    public static CCShaderInstance cosmicParticleShader;
     public static CCShaderInstance starrySkyShader; // entity render
     public static CCShaderInstance starrySkyShaderItem; // item render
     public static CCUniform cosmicTime;
@@ -104,6 +125,12 @@ public final class AdorableArmoryShaders {
     public static CCUniform cosmicExternalScale;
     public static CCUniform cosmicOpacity;
     public static CCUniform cosmicUVs;
+    public static CCUniform cosmicParticleTime;
+    public static CCUniform cosmicParticleYaw;
+    public static CCUniform cosmicParticlePitch;
+    public static CCUniform cosmicParticleExternalScale;
+    public static CCUniform cosmicParticleOpacity;
+    public static CCUniform cosmicParticleUVs;
     public static CCUniform portalLayers;
     public static CCUniform portalLayersItem;
     public static CCUniform starScale;
@@ -135,12 +162,41 @@ public final class AdorableArmoryShaders {
             .setTextureState(RenderStateShardAccess.BLOCK_SHEET_MAPPED)
             .createCompositeState(true));
 
+    public static final RenderType COSMIC_BLOCK_AFTER_LEVEL_RENDER_TYPE = RenderType.create(MODID + ":cosmic_block_after_level", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 2097152, true, false, RenderType.CompositeState.builder()
+            .setShaderState(new RenderStateShard.ShaderStateShard(() -> cosmicShader))
+            .setDepthTestState(RenderStateShardAccess.LEQUAL_DEPTH_TEST)
+            .setLightmapState(RenderStateShardAccess.LIGHT_MAP)
+            .setTransparencyState(RenderStateShardAccess.TRANSLUCENT_TRANSPARENCY)
+            .setTextureState(RenderStateShardAccess.BLOCK_SHEET_MAPPED)
+            .setLayeringState(RenderStateShardAccess.SHADER_LAYER_DEPTH_BIAS)
+            .setOutputState(RenderStateShardAccess.MAIN_TARGET)
+            .setWriteMaskState(RenderStateShardAccess.COLOR_WRITE)
+            .createCompositeState(false));
+
+    public static final RenderType COSMIC_ITEM_AFTER_LEVEL_RENDER_TYPE = RenderType.create(MODID + ":cosmic_item_after_level", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 2097152, true, false, RenderType.CompositeState.builder()
+            .setShaderState(new RenderStateShard.ShaderStateShard(() -> cosmicShader))
+            .setDepthTestState(RenderStateShardAccess.LEQUAL_DEPTH_TEST)
+            .setLightmapState(RenderStateShardAccess.LIGHT_MAP)
+            .setTransparencyState(RenderStateShardAccess.TRANSLUCENT_TRANSPARENCY)
+            .setTextureState(RenderStateShardAccess.BLOCK_SHEET_MAPPED)
+            .setLayeringState(RenderStateShardAccess.SHADER_LAYER_DEPTH_BIAS)
+            .setOutputState(RenderStateShardAccess.MAIN_TARGET)
+            .setWriteMaskState(RenderStateShardAccess.COLOR_WRITE)
+            .createCompositeState(false));
+
+    public static final RenderType COSMIC_HAND_AFTER_LEVEL_RENDER_TYPE = RenderType.create(MODID + ":cosmic_hand_after_level", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 2097152, true, false, RenderType.CompositeState.builder()
+            .setShaderState(new RenderStateShard.ShaderStateShard(() -> cosmicShader))
+            .setDepthTestState(RenderStateShardAccess.NO_DEPTH_TEST)
+            .setLightmapState(RenderStateShardAccess.LIGHT_MAP)
+            .setTransparencyState(RenderStateShardAccess.TRANSLUCENT_TRANSPARENCY)
+            .setTextureState(RenderStateShardAccess.BLOCK_SHEET_MAPPED)
+            .setOutputState(RenderStateShardAccess.MAIN_TARGET)
+            .setWriteMaskState(RenderStateShardAccess.COLOR_WRITE)
+            .createCompositeState(false));
+
     public static final RenderType SKY_ENTITY = RenderType.create("sky_entity", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, false, RenderType.CompositeState.builder()
             .setShaderState(new RenderStateShard.ShaderStateShard(() -> starrySkyShader))
-            .setTextureState(RenderStateShard.MultiTextureStateShard.builder()
-                    .add(RenderStateShardAccess.END_SKY_LOCATION,  false, false)
-                    .add(RenderStateShardAccess.END_PORTAL_LOCATION, false, false)
-                    .build())
+            .setTextureState(RenderStateShard.MultiTextureStateShard.builder().add(RenderStateShardAccess.END_SKY_LOCATION,  false, false).add(RenderStateShardAccess.END_PORTAL_LOCATION, false, false).build())
             .setTransparencyState(RenderStateShardAccess.ADDITIVE_TRANSPARENCY)
             .setCullState(RenderStateShardAccess.NO_CULL)
             .createCompositeState(false));
@@ -151,11 +207,29 @@ public final class AdorableArmoryShaders {
             .setLightmapState(RenderStateShardAccess.LIGHT_MAP)
             .setTransparencyState(RenderStateShardAccess.ADDITIVE_TRANSPARENCY)
             .setWriteMaskState(RenderStateShardAccess.COLOR_DEPTH_WRITE)
-            .setTextureState(RenderStateShard.MultiTextureStateShard.builder()
-                    .add(RenderStateShardAccess.END_SKY_LOCATION,  false, false)
-                    .add(RenderStateShardAccess.END_PORTAL_LOCATION, false, false)
-                    .build())
+            .setTextureState(RenderStateShardAccess.SKY_ITEM_TEXTURES)
             .createCompositeState(true));
+
+    public static final RenderType SKY_ITEM_AFTER_LEVEL_RENDER_TYPE = RenderType.create("sky_item_after_level", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 2097152, true, false, RenderType.CompositeState.builder()
+            .setShaderState(new RenderStateShard.ShaderStateShard(() -> starrySkyShaderItem))
+            .setDepthTestState(RenderStateShardAccess.LEQUAL_DEPTH_TEST)
+            .setLightmapState(RenderStateShardAccess.LIGHT_MAP)
+            .setTransparencyState(RenderStateShardAccess.ADDITIVE_TRANSPARENCY)
+            .setWriteMaskState(RenderStateShardAccess.COLOR_WRITE)
+            .setOutputState(RenderStateShardAccess.MAIN_TARGET)
+            .setLayeringState(RenderStateShardAccess.SHADER_LAYER_DEPTH_BIAS)
+            .setTextureState(RenderStateShardAccess.SKY_ITEM_TEXTURES)
+            .createCompositeState(false));
+
+    public static final RenderType SKY_ITEM_HAND_AFTER_LEVEL_RENDER_TYPE = RenderType.create("sky_item_hand_after_level", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 2097152, true, false, RenderType.CompositeState.builder()
+            .setShaderState(new RenderStateShard.ShaderStateShard(() -> starrySkyShaderItem))
+            .setDepthTestState(RenderStateShardAccess.NO_DEPTH_TEST)
+            .setLightmapState(RenderStateShardAccess.LIGHT_MAP)
+            .setTransparencyState(RenderStateShardAccess.ADDITIVE_TRANSPARENCY)
+            .setWriteMaskState(RenderStateShardAccess.COLOR_WRITE)
+            .setOutputState(RenderStateShardAccess.MAIN_TARGET)
+            .setTextureState(RenderStateShardAccess.SKY_ITEM_TEXTURES)
+            .createCompositeState(false));
 
     public static final RenderType SKY_ITEM_GUI = RenderType.create("sky_item_gui", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 2097152, false, false, RenderType.CompositeState.builder()
             .setShaderState(new RenderStateShard.ShaderStateShard(() -> starrySkyShaderItem))
@@ -163,10 +237,7 @@ public final class AdorableArmoryShaders {
             .setTransparencyState(RenderStateShardAccess.ADDITIVE_TRANSPARENCY)
             .setWriteMaskState(new RenderStateShard.WriteMaskStateShard(true, true))
             .setCullState(RenderStateShardAccess.NO_CULL)
-            .setTextureState(RenderStateShard.MultiTextureStateShard.builder()
-                    .add(RenderStateShardAccess.END_SKY_LOCATION, false, false)
-                    .add(RenderStateShardAccess.END_PORTAL_LOCATION, false, false)
-                    .build())
+            .setTextureState(RenderStateShardAccess.SKY_ITEM_TEXTURES)
             .createCompositeState(true)
     );
 
@@ -250,6 +321,20 @@ public final class AdorableArmoryShaders {
             cosmicUVs = Objects.requireNonNull(cosmicShader.getUniform("cosmicuvs"));
             cosmicTime.set((float) renderTime + renderFrame);
             cosmicShader.onApply(() -> cosmicTime.set((float) renderTime + renderFrame));
+        });
+    }
+
+    public static void registerCosmicParticleShaders(RegisterShadersEvent shader) {
+        shader.registerShader(CCShaderInstance.create(shader.getResourceProvider(), new ResourceLocation(MODID, "cosmic_particle"), DefaultVertexFormat.PARTICLE), instance -> {
+            cosmicParticleShader = (CCShaderInstance) instance;
+            cosmicParticleTime = Objects.requireNonNull(cosmicParticleShader.getUniform("time"));
+            cosmicParticleYaw = Objects.requireNonNull(cosmicParticleShader.getUniform("yaw"));
+            cosmicParticlePitch = Objects.requireNonNull(cosmicParticleShader.getUniform("pitch"));
+            cosmicParticleExternalScale = Objects.requireNonNull(cosmicParticleShader.getUniform("externalScale"));
+            cosmicParticleOpacity = Objects.requireNonNull(cosmicParticleShader.getUniform("opacity"));
+            cosmicParticleUVs = Objects.requireNonNull(cosmicParticleShader.getUniform("cosmicuvs"));
+            cosmicParticleTime.set((float) renderTime + renderFrame);
+            cosmicParticleShader.onApply(() -> cosmicParticleTime.set((float) renderTime + renderFrame));
         });
     }
 
@@ -342,20 +427,35 @@ public final class AdorableArmoryShaders {
         AdorableArmoryShaders.inventoryRender = false;
     }
 
-    public static void uploadParticleUnity() {
-        if (cosmicShader == null) return;
+    public static boolean uploadParticleUnity() {
+        if (cosmicParticleShader == null) return false;
 
-        // time
-        if (cosmicTime != null) {
-            cosmicTime.set((float) renderTime + renderFrame);
+        Minecraft mc = Minecraft.getInstance();
+        refreshCosmicUVs(mc);
+
+        float yaw = 0.0F;
+        float pitch = 0.0F;
+        if (mc.player != null) {
+            yaw = (float) (mc.player.getYRot() * Math.PI / 180.0F);
+            pitch = -(float) (mc.player.getXRot() * Math.PI / 180.0F);
         }
 
-        // cosmic UVs
-        if (cosmicUVs != null) {
-            cosmicUVs.set(COSMIC_UVS);
-        }
+        if (cosmicParticleTime != null) cosmicParticleTime.set((float) renderTime + renderFrame);
+        if (cosmicParticleYaw != null) cosmicParticleYaw.set(yaw);
+        if (cosmicParticlePitch != null) cosmicParticlePitch.set(pitch);
+        if (cosmicParticleExternalScale != null) cosmicParticleExternalScale.set(1.0F);
+        if (cosmicParticleOpacity != null) cosmicParticleOpacity.set(0.78F);
+        if (cosmicParticleUVs != null) cosmicParticleUVs.setMatrix2x2Array(COSMIC_UVS, 10);
+        return true;
+    }
 
-        if (cosmicExternalScale != null) cosmicExternalScale.set(1.0F);
-        if (cosmicOpacity != null) cosmicOpacity.set(0.78F);
+    private static void refreshCosmicUVs(Minecraft mc) {
+        for (int i = 0; i < 10; ++i) {
+            TextureAtlasSprite sprite = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(AdorableArmory.path("item/cosmic_" + i));
+            COSMIC_UVS[i * 4] = sprite.getU0();
+            COSMIC_UVS[i * 4 + 1] = sprite.getV0();
+            COSMIC_UVS[i * 4 + 2] = sprite.getU1();
+            COSMIC_UVS[i * 4 + 3] = sprite.getV1();
+        }
     }
 }

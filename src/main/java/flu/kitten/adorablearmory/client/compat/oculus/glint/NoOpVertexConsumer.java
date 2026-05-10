@@ -1,4 +1,4 @@
-package flu.kitten.adorablearmory.client.render;
+package flu.kitten.adorablearmory.client.compat.oculus.glint;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import org.jetbrains.annotations.NotNull;

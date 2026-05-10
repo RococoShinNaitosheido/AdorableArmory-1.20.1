@@ -31,6 +31,7 @@ public class AdorableArmoryClient {
     @SubscribeEvent
     public static void registerShaders(RegisterShadersEvent event) throws IOException {
         AdorableArmoryShaders.registerCosmicShaders(event);
+        AdorableArmoryShaders.registerCosmicParticleShaders(event);
         AdorableArmoryShaders.registerStarrySkyShaders(event);
         AdorableArmoryShaders.registerStarrySkyItemShaders(event);
 

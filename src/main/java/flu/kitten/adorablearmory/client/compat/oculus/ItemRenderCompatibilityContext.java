@@ -1,4 +1,4 @@
-package flu.kitten.adorablearmory.client.render;
+package flu.kitten.adorablearmory.client.compat.oculus;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.ItemDisplayContext;

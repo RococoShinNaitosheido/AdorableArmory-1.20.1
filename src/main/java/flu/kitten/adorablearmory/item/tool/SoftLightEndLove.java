@@ -1,8 +1,12 @@
 package flu.kitten.adorablearmory.item.tool;
 
+import flu.kitten.adorablearmory.AdorableArmory;
 import flu.kitten.adorablearmory.api.duck.IGlintColorProvider;
 import flu.kitten.adorablearmory.api.duck.IItemOutlineItem;
-import flu.kitten.adorablearmory.client.itemoutline.ItemOutlineData;
+import flu.kitten.adorablearmory.api.shader.ShaderLayerItem;
+import flu.kitten.adorablearmory.api.shader.ShaderLayerModelTransform;
+import flu.kitten.adorablearmory.api.shader.ShaderLayerProperties;
+import flu.kitten.adorablearmory.client.compat.oculus.itemoutline.ItemOutlineData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -12,7 +16,8 @@ import net.minecraft.world.item.Tier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SoftLightEndLove extends SwordItem implements IItemOutlineItem, IGlintColorProvider {
+public class SoftLightEndLove extends SwordItem implements ShaderLayerItem /*, IItemOutlineItem, IGlintColorProvider*/ {
+    private static final ShaderLayerProperties SHADER_LAYER = ShaderLayerProperties.cosmic(ShaderLayerModelTransform.DEFAULT_TOOL, AdorableArmory.path("item/soft_light_end_love_sword_mask"));
 
     public SoftLightEndLove(Tier tier, int attack, float speed, Properties properties) {
         super(tier, attack, speed, properties);
@@ -29,21 +34,26 @@ public class SoftLightEndLove extends SwordItem implements IItemOutlineItem, IGl
     }
 
     @Override
+    public @NotNull ShaderLayerProperties getShaderLayer(ItemStack stack) {
+        return SHADER_LAYER;
+    }
+
+    /*@Override
     public @Nullable ItemOutlineData getItemOutline(ItemStack stack, ItemDisplayContext context) {
         return switch (context) {
             case GUI -> new ItemOutlineData(0xffb755ff, 3);
             case FIRST_PERSON_LEFT_HAND, FIRST_PERSON_RIGHT_HAND -> new ItemOutlineData(0xffb755ff, 6);
             default -> new ItemOutlineData(0xffb755ff, 4);
         };
-    }
+    }*/
 
     @Override
     public boolean isFoil(@NotNull ItemStack stack) {
-        return true;
+        return false;
     }
 
-    @Override
+    /*@Override
     public int getGlintColor(ItemStack stack) {
         return 0xffb755ff;
-    }
+    }*/
 }

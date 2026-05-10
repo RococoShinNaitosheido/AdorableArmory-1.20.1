@@ -1,8 +1,8 @@
 package flu.kitten.adorablearmory.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import flu.kitten.adorablearmory.client.itemoutline.ItemOutlineDispatcher;
-import flu.kitten.adorablearmory.client.itemoutline.ItemOutlinePostProcessor;
+import flu.kitten.adorablearmory.client.compat.oculus.itemoutline.ItemOutlineDispatcher;
+import flu.kitten.adorablearmory.client.compat.oculus.itemoutline.ItemOutlinePostProcessor;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;

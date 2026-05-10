@@ -3,7 +3,7 @@
 in vec3 Position;
 in vec4 Color;
 in vec2 UV0;
-in vec2 UV1;
+in ivec2 UV2;
 in vec3 Normal;
 
 uniform mat4 ModelViewMat;
@@ -14,6 +14,7 @@ uniform float CamPitch;
 
 out vec3 vDir;
 out vec4 texProj0;
+out vec2 texCoord0;
 out vec3 worldPos;
 
 mat3 rotY(float a) {
@@ -31,6 +32,7 @@ void main() {
     vec4 clipPos = ProjMat * viewPos;
     gl_Position = clipPos;
     texProj0 = vec4(clipPos.xy * 0.5 + clipPos.w * 0.5, clipPos.zw);
+    texCoord0 = UV0;
 
     vec3 cameraForward = vec3(0.0, 0.0, -1.0);
     mat3 cameraRotation = rotX(-CamPitch) * rotY(-CamYaw);

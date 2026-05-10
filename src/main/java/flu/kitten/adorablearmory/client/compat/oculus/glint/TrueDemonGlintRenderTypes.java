@@ -1,4 +1,4 @@
-package flu.kitten.adorablearmory.client.render;
+package flu.kitten.adorablearmory.client.compat.oculus.glint;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -32,7 +32,7 @@ public final class TrueDemonGlintRenderTypes {
         RenderStateShard.TextureStateShard texture = new RenderStateShard.TextureStateShard(glintTexture, true, false);
         RenderStateShard.TransparencyStateShard glintTransparency = new RenderStateShard.TransparencyStateShard("glint_transparency", () -> {
             RenderSystem.enableBlend();
-            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.DST_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
+            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
         }, () -> {
             RenderSystem.disableBlend();
             RenderSystem.defaultBlendFunc();
@@ -42,7 +42,7 @@ public final class TrueDemonGlintRenderTypes {
         RenderStateShard.WriteMaskStateShard writeMask = new RenderStateShard.WriteMaskStateShard(true, false);
         RenderStateShard.CullStateShard cull = new RenderStateShard.CullStateShard(false);
         RenderStateShard.OverlayStateShard overlay = new RenderStateShard.OverlayStateShard(false);
-        RenderStateShard.LightmapStateShard lightmap = new RenderStateShard.LightmapStateShard(true);
+        RenderStateShard.LightmapStateShard lightmap = new RenderStateShard.LightmapStateShard(false);
         RenderStateShard.TexturingStateShard glintTexturing = new RenderStateShard.TexturingStateShard("glint_texturing", () -> setupGlintTexturing(8.0F), RenderSystem::resetTextureMatrix);
 
         RenderType.CompositeState state = RenderType.CompositeState.builder()

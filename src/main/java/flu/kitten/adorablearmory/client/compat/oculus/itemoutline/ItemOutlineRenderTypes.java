@@ -1,4 +1,4 @@
-package flu.kitten.adorablearmory.client.itemoutline;
+package flu.kitten.adorablearmory.client.compat.oculus.itemoutline;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;

@@ -1,4 +1,4 @@
-package flu.kitten.adorablearmory.client.render;
+package flu.kitten.adorablearmory.client.compat.oculus.glint;
 
 import flu.kitten.adorablearmory.mixin.RenderTypeInvoker;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;

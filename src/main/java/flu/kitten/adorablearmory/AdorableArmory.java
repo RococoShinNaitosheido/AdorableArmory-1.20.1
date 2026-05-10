@@ -2,14 +2,10 @@ package flu.kitten.adorablearmory;
 
 import com.mojang.logging.LogUtils;
 import flu.kitten.adorablearmory.api.BossBarRenderEvent;
-import flu.kitten.adorablearmory.client.CosmicRenderProperties;
-import flu.kitten.adorablearmory.client.shader.AdorableArmoryShaders;
 import flu.kitten.adorablearmory.commands.BarrierCommand;
 import flu.kitten.adorablearmory.commands.EnhancedTeleportCommand;
 import flu.kitten.adorablearmory.network.NetworkHandler;
 import flu.kitten.adorablearmory.register.AdorableArmoryRegister;
-import flu.kitten.adorablearmory.register.ShaderRendererRegistry;
-import flu.kitten.adorablearmory.util.TransformUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
@@ -67,19 +63,6 @@ public class AdorableArmory {
     public void clientSetup(FMLClientSetupEvent event) {
         LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         event.enqueueWork(() -> {
-            // Register the specified renderType
-            // CosmicRenderProperties item = new CosmicRenderProperties(TransformUtils.DEFAULT_TOOL, AdorableArmoryShaders.SKY_ITEM);
-            // ShaderRendererRegistry.registerRenderItem(AdorableArmoryRegister.SOFT_LIGHT_END_LOVE.get(), item);
-
-            // CosmicRenderProperties item1 = new CosmicRenderProperties(TransformUtils.DEFAULT_ITEM, AdorableArmoryShaders.SKY_ITEM);
-            // ShaderRendererRegistry.registerRenderItem(AdorableArmoryRegister.SPARKLING_DREAM_IDOL_STAR.get(), item1);
-
-            CosmicRenderProperties item2 = new CosmicRenderProperties(TransformUtils.DEFAULT_ITEM, AdorableArmoryShaders.SKY_ITEM);
-            ShaderRendererRegistry.registerRenderItem(AdorableArmoryRegister.SCARLET_LORA_ALYSIA_EGG.get(), item2);
-
-            CosmicRenderProperties block = new CosmicRenderProperties(TransformUtils.DEFAULT_BLOCK_ITEM, AdorableArmoryShaders.COSMIC_RENDER_TYPE);
-            ShaderRendererRegistry.registerRenderBlock(AdorableArmoryRegister.LOLA.get(), block);
-
             // Register the boss bar render event handler
             MinecraftForge.EVENT_BUS.register(BossBarRenderEvent.class);
             AdorableArmory.LOGGER.info("Registered custom boss bar renderer");

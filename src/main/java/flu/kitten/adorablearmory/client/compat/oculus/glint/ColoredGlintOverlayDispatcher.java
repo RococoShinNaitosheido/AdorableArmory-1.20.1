@@ -1,8 +1,10 @@
-package flu.kitten.adorablearmory.client.render;
+package flu.kitten.adorablearmory.client.compat.oculus.glint;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import flu.kitten.adorablearmory.api.duck.IGlintColorProvider;
+import flu.kitten.adorablearmory.client.compat.oculus.ItemRenderCompatibilityContext;
+import flu.kitten.adorablearmory.client.compat.oculus.ItemShaderModCompat;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;

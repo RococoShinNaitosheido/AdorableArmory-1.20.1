@@ -1,7 +1,3 @@
 {
-  "parent": "item/template_spawn_egg",
-  "loader": "adorablearmory:cosmic",
-  "cosmic": {
-    "mask": "adorablearmory:item/default_egg_mask"
-  }
+  "parent": "item/template_spawn_egg"
 }

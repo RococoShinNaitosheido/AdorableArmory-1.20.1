@@ -2,7 +2,7 @@ package flu.kitten.adorablearmory.item.tool;
 
 import flu.kitten.adorablearmory.api.duck.IGlintColorProvider;
 import flu.kitten.adorablearmory.api.duck.IItemOutlineItem;
-import flu.kitten.adorablearmory.client.itemoutline.ItemOutlineData;
+import flu.kitten.adorablearmory.client.compat.oculus.itemoutline.ItemOutlineData;
 import flu.kitten.adorablearmory.util.TrueDemonBowNameEffects;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;

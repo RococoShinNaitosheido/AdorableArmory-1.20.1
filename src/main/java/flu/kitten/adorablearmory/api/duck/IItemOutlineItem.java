@@ -1,6 +1,6 @@
 package flu.kitten.adorablearmory.api.duck;
 
-import flu.kitten.adorablearmory.client.itemoutline.ItemOutlineData;
+import flu.kitten.adorablearmory.client.compat.oculus.itemoutline.ItemOutlineData;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;

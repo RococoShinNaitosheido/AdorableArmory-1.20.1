@@ -20,7 +20,11 @@
     "RenderTypeInvoker",
     "ItemStackHoverNameMixin",
     "OutlineItemRenderMixin",
-    "ColoredGlintOverlayItemRenderMixin"
+    "InventoryScreenItemOutlineMixin",
+    "ColoredGlintOverlayItemRenderMixin",
+    "TerrainParticleGetTypeMixin",
+    "LolaCosmicAfterLevelMixin",
+    "SingleQuadParticleMixin"
   ],
 
   "server": [],

@@ -1,19 +1,8 @@
 #version 150
 
-mat2 mat2_rotate_z(float radians) {
-    return mat2(
-        cos(radians), -sin(radians),
-        sin(radians), cos(radians)
-    );
-}
-
-mat2 rot(float a) {
-    float c = cos(a), s = sin(a);
-    return mat2(c, -s, s, c);
-}
-
 uniform sampler2D Sampler0;
 uniform sampler2D Sampler1;
+uniform sampler2D Sampler3;
 uniform float GameTime;
 uniform int EndPortalLayers;
 uniform float StarScale;
@@ -28,9 +17,22 @@ uniform float CamPitch;
 
 in vec3 vDir;
 in vec4 texProj0;
+in vec2 texCoord0;
 in vec3 worldPos;
 
 out vec4 fragColor;
+
+mat2 mat2_rotate_z(float radians) {
+    return mat2(
+        cos(radians), -sin(radians),
+        sin(radians), cos(radians)
+    );
+}
+
+mat2 rot(float a) {
+    float c = cos(a), s = sin(a);
+    return mat2(c, -s, s, c);
+}
 
 const vec3 COLORS[16] = vec3[16](
     vec3(0.045, 0.180, 0.220),
@@ -58,7 +60,6 @@ const mat4 SCALE_TRANSLATE = mat4(
     0.0, 0.0, 0.0, 1.0
 );
 
-// 彩虹
 vec3 rainbow(float h) {
     float x = fract(h);
     const float TAU = 6.2831853;
@@ -100,6 +101,10 @@ mat4 layer(float layer) {
 }
 
 void main() {
+    vec4 maskSample = texture(Sampler3, texCoord0);
+    float maskValue = max(max(maskSample.r, maskSample.g), maskSample.b);
+    float maskAlpha = maskSample.a * smoothstep(0.01, 0.08, maskValue);
+    if (maskAlpha < 0.01) discard;
 
     vec4 baseSample = textureProj(Sampler0, texProj0);
     if (baseSample.a < 0.01) discard;
@@ -141,7 +146,7 @@ void main() {
     }
     vec3 finalColor = min(color * (2.0 * Opacity), vec3(1.0));
 
-    float finalAlpha = Opacity * baseSample.a;
+    float finalAlpha = Opacity * baseSample.a * maskAlpha;
     if (abs(CamYaw) < 0.01 && abs(CamPitch) < 0.01) {
         finalAlpha *= 1.0;
     }

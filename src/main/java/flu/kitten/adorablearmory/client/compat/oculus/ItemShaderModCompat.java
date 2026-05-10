@@ -1,4 +1,4 @@
-package flu.kitten.adorablearmory.client.render;
+package flu.kitten.adorablearmory.client.compat.oculus;
 
 import flu.kitten.adorablearmory.AdorableArmory;
 import flu.kitten.adorablearmory.api.duck.IGlintColorProvider;
@@ -13,6 +13,37 @@ public final class ItemShaderModCompat {
 
     public static boolean isOculusEmbeddiumActive() {
         return OCULUS_LOADED && EMBEDDIUM_LOADED;
+    }
+
+    public static boolean isOculusShaderPackActive() {
+        if (!OCULUS_LOADED) {
+            return false;
+        }
+
+        try {
+            Class<?> apiClass = Class.forName("net.irisshaders.iris.api.v0.IrisApi");
+            Object api = apiClass.getMethod("getInstance").invoke(null);
+            Object active = apiClass.getMethod("isShaderPackInUse").invoke(api);
+            return Boolean.TRUE.equals(active);
+        } catch (ReflectiveOperationException | LinkageError ignored) {
+            return false;
+        }
+    }
+
+    public static boolean shouldDeferWorldBlockShaderLayer() {
+        return isOculusShaderPackActive();
+    }
+
+    public static boolean shouldDeferLolaCosmicBlock() {
+        return shouldDeferWorldBlockShaderLayer();
+    }
+
+    public static boolean shouldDeferItemShaderLayer(ItemDisplayContext context) {
+        if (!isOculusShaderPackActive()) {
+            return false;
+        }
+
+        return context != ItemDisplayContext.GUI;
     }
 
     public static boolean shouldDeferFirstPersonOutlineComposite(ItemDisplayContext context) {

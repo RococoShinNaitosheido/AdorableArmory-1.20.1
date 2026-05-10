@@ -1,12 +1,15 @@
-package flu.kitten.adorablearmory.client.render;
+package flu.kitten.adorablearmory.client.compat.oculus.glint;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import flu.kitten.adorablearmory.AdorableArmory;
+import flu.kitten.adorablearmory.client.compat.oculus.ItemShaderModCompat;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
 public final class TrueDemonGlintRenderType extends RenderType {
+    private static final float DEFAULT_COLOR_OVERLAY = 1.24f;
+    private static final float OCULUS_SHADERPACK_COLOR_OVERLAY = 1.82f;
 
     private TrueDemonGlintRenderType(String name, RenderType type, int argb, boolean sortOnUpload, float glintAlpha, float uvScale, float scrollMulU, float scrollMulV) {
         super(name, type.format(), type.mode(), type.bufferSize(), type.affectsCrumbling(), sortOnUpload,
@@ -17,7 +20,7 @@ public final class TrueDemonGlintRenderType extends RenderType {
                     float r = ((argb >>> 16) & 0xFF) / 255f;
                     float g = ((argb >>> 8) & 0xFF) / 255f;
                     float b = (argb & 0xFF) / 255f;
-                    float colorOverlay = 1.24f;
+                    float colorOverlay = ItemShaderModCompat.isOculusShaderPackActive() ? OCULUS_SHADERPACK_COLOR_OVERLAY : DEFAULT_COLOR_OVERLAY;
                     RenderSystem.setShaderColor(r * colorOverlay, g * colorOverlay, b * colorOverlay, a);
                     RenderSystem.setShaderGlintAlpha(glintAlpha);
                     applyExtraUvScale(uvScale);

@@ -2,7 +2,9 @@ package flu.kitten.adorablearmory.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import flu.kitten.adorablearmory.block.LolaBlockEntity;
-import flu.kitten.adorablearmory.register.AdorableArmoryRegister;
+import flu.kitten.adorablearmory.client.compat.oculus.ItemShaderModCompat;
+import flu.kitten.adorablearmory.client.compat.oculus.LolaCosmicBlockLateRenderQueue;
+import flu.kitten.adorablearmory.register.ShaderRendererRegistry;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -17,7 +19,16 @@ public class LolaBlockEntityRenderer implements BlockEntityRenderer<LolaBlockEnt
     @Override
     public void render(@NotNull LolaBlockEntity lolaTntBlockEntity, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource source, int packedLight, int packedOverlay) {
         BlockState blockState = lolaTntBlockEntity.getBlockState();
-        ItemStack stack = new ItemStack(AdorableArmoryRegister.LOLA_ITEM.get());
+        if (!ShaderRendererRegistry.hasCosmicLayer(blockState)) {
+            return;
+        }
+
+        ItemStack stack = new ItemStack(blockState.getBlock().asItem());
+        if (ItemShaderModCompat.shouldDeferWorldBlockShaderLayer()) {
+            LolaCosmicBlockLateRenderQueue.enqueue(lolaTntBlockEntity, poseStack, packedLight, packedOverlay);
+            return;
+        }
+
         poseStack.pushPose();
         poseStack.translate(0.5,0.5,0.5);
         poseStack.scale(1.0011123400F,1.0011123400F,1.0011123400F);

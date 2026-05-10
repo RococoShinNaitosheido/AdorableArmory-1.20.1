@@ -8,6 +8,8 @@ import com.mojang.math.Transformation;
 import flu.kitten.adorablearmory.AdorableArmory;
 import flu.kitten.adorablearmory.api.client.model.PerspectiveModelState;
 import flu.kitten.adorablearmory.client.CosmicRenderProperties;
+import flu.kitten.adorablearmory.client.compat.oculus.CosmicItemLateRenderQueue;
+import flu.kitten.adorablearmory.client.compat.oculus.ItemShaderModCompat;
 import flu.kitten.adorablearmory.client.shader.AdorableArmoryShaders;
 import flu.kitten.adorablearmory.register.ShaderRendererRegistry;
 import flu.kitten.adorablearmory.util.TransformUtils;
@@ -67,10 +69,9 @@ public final class CosmicBakeModel implements BakedModel {
     }
 
     public void renderItem(ItemStack stack, ItemDisplayContext transformType, PoseStack pStack, MultiBufferSource buffers, int packedLight, int packedOverlay) {
-        CosmicRenderProperties properties = ShaderRendererRegistry.getPropertiesForItem(stack.getItem());
+        CosmicRenderProperties properties = ShaderRendererRegistry.getPropertiesForStack(stack);
         RenderType renderType = AdorableArmoryShaders.COSMIC_RENDER_TYPE;
         this.parentState = TransformUtils.stateFromItemTransforms(wrapped.getTransforms());
-        Minecraft mc = Minecraft.getInstance();
 
         if (properties != null) {
             this.parentState = properties.modelState();
@@ -80,13 +81,30 @@ public final class CosmicBakeModel implements BakedModel {
         BakedModel model = this.wrapped.getOverrides().resolve(this.wrapped, stack, this.world, this.entity, 0);
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         assert model != null;
+        Set<RenderType> baseRenderTypes = new LinkedHashSet<>();
         for (BakedModel bakedModel : model.getRenderPasses(stack, true)) {
             for (RenderType rendertype : bakedModel.getRenderTypes(stack, true)) {
                 itemRenderer.renderModelLists(bakedModel, stack, packedLight, packedOverlay, pStack, buffers.getBuffer(rendertype));
+                baseRenderTypes.add(rendertype);
             }
         }
-        if (buffers instanceof MultiBufferSource.BufferSource source) source.endBatch();
+        if (buffers instanceof MultiBufferSource.BufferSource source) {
+            baseRenderTypes.forEach(source::endBatch);
+        }
 
+        if (!AdorableArmoryShaders.inventoryRender && ItemShaderModCompat.shouldDeferItemShaderLayer(transformType) && supportsLateRenderType(renderType)) {
+            if (!isShaderLayerReady(renderType)) {
+                return;
+            }
+            CosmicItemLateRenderQueue.enqueue(this, stack, transformType, pStack, packedLight, packedOverlay, model, renderType);
+            return;
+        }
+
+        renderShaderLayer(stack, transformType, pStack, buffers, packedLight, packedOverlay, model, renderType, false);
+    }
+
+    public void renderShaderLayer(ItemStack stack, ItemDisplayContext transformType, PoseStack pStack, MultiBufferSource buffers, int packedLight, int packedOverlay, BakedModel model, RenderType renderType, boolean lateRender) {
+        Minecraft mc = Minecraft.getInstance();
         float rot = 180.0F;
         float yaw = 0.0F;
         float pitch = 0.0F;
@@ -98,6 +116,10 @@ public final class CosmicBakeModel implements BakedModel {
         boolean isCosmicShader = (renderType == AdorableArmoryShaders.COSMIC_RENDER_TYPE || renderType == AdorableArmoryShaders.COSMIC_BLOCK_RENDER_TYPE);
         boolean overrideStarScale = false;
         float prevSaved = AdorableArmoryShaders.starScaleItemSaved;
+
+        if (!isShaderLayerReady(renderType)) {
+            return;
+        }
 
         if (mc.player != null) {
             yaw = (float) (mc.player.getYRot() * Math.PI / rot);
@@ -136,71 +158,120 @@ public final class CosmicBakeModel implements BakedModel {
             }
         }
 
-        AdorableArmoryShaders.cosmicTime.set((System.currentTimeMillis() - AdorableArmoryShaders.renderTime) / 2000.0F);
-        AdorableArmoryShaders.cosmicYaw.set(yaw);
-        AdorableArmoryShaders.cosmicPitch.set(pitch);
-
-        if (AdorableArmoryShaders.camYaw != null && AdorableArmoryShaders.camPitch != null) {
-            AdorableArmoryShaders.camYaw.set(camYaw);
-            AdorableArmoryShaders.camPitch.set(camPitch);
+        if (lateRender) {
+            renderType = lateRenderType(renderType, transformType);
         }
 
-        AdorableArmoryShaders.cosmicExternalScale.set(scale);
-        AdorableArmoryShaders.cosmicOpacity.set(1.0F);
-        for (int i = 0; i < 10; ++i) {
-            TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(AdorableArmory.path("item/cosmic_" + i)); //  at assets.adorable-armory.textures.item
-            AdorableArmoryShaders.COSMIC_UVS[i * 4] = sprite.getU0();
-            AdorableArmoryShaders.COSMIC_UVS[i * 4 + 1] = sprite.getV0();
-            AdorableArmoryShaders.COSMIC_UVS[i * 4 + 2] = sprite.getU1();
-            AdorableArmoryShaders.COSMIC_UVS[i * 4 + 3] = sprite.getV1();
-        }
-
-        AdorableArmoryShaders.cosmicUVs.set(AdorableArmoryShaders.COSMIC_UVS);
-        VertexConsumer buffersBuffer = buffers.getBuffer(renderType);
-
-        // Block-shaped models(3d GUI)
-        if (model.isGui3d() && isBlockContext(transformType)) {
-            List<BakedQuad> blockLayer = new ArrayList<>();
-            RandomSource random = RandomSource.create();
-            for (Direction direction : Direction.values()) {
-                blockLayer.addAll(model.getQuads(null, direction, random));
-            }
-
-            List<TextureAtlasSprite> maskSprites = new ArrayList<>();
-            for (ResourceLocation res : maskSprite) {
-                maskSprites.add(Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(res));
-            }
-
-            List<BakedQuad> overlayQuads = new ArrayList<>();
-            for (BakedQuad base : blockLayer) {
-                for (TextureAtlasSprite sprite : maskSprites) {
-                    overlayQuads.add(textureQuadBestEffort(base, sprite));
+        try {
+            if (isStarrySkyShader) {
+                uploadStarrySkyItemUniforms();
+            } else {
+                AdorableArmoryShaders.cosmicTime.set((System.currentTimeMillis() - AdorableArmoryShaders.renderTime) / 2000.0F);
+                AdorableArmoryShaders.cosmicYaw.set(yaw);
+                AdorableArmoryShaders.cosmicPitch.set(pitch);
+                AdorableArmoryShaders.cosmicExternalScale.set(scale);
+                AdorableArmoryShaders.cosmicOpacity.set(1.0F);
+                for (int i = 0; i < 10; ++i) {
+                    TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(AdorableArmory.path("item/cosmic_" + i)); //  at assets.adorable-armory.textures.item
+                    AdorableArmoryShaders.COSMIC_UVS[i * 4] = sprite.getU0();
+                    AdorableArmoryShaders.COSMIC_UVS[i * 4 + 1] = sprite.getV0();
+                    AdorableArmoryShaders.COSMIC_UVS[i * 4 + 2] = sprite.getU1();
+                    AdorableArmoryShaders.COSMIC_UVS[i * 4 + 3] = sprite.getV1();
                 }
-            }
-            mc.getItemRenderer().renderQuadList(pStack, buffersBuffer, overlayQuads, stack, packedLight, packedOverlay);
-        } else {
-            // Flat/sprite-layer models
-            List<TextureAtlasSprite> atlasSprite = new ArrayList<>();
-            for (ResourceLocation res : maskSprite) {
-                atlasSprite.add(Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(res));
+
+                AdorableArmoryShaders.cosmicUVs.setMatrix2x2Array(AdorableArmoryShaders.COSMIC_UVS, 10);
             }
 
-            LinkedList<BakedQuad> quads = new LinkedList<>();
-            for (int i = 0; i < atlasSprite.size(); i++) {
-                TextureAtlasSprite sprite = atlasSprite.get(i);
-                List<BlockElement> unbaked = ITEM_MODEL_GENERATOR.processFrames(i, "layer" + i, sprite.contents());
-                for (BlockElement element : unbaked) {
-                    for (Map.Entry<Direction, BlockElementFace> entry : element.faces.entrySet()) {
-                        quads.add(FACE_BAKERY.bakeQuad(element.from, element.to, entry.getValue(), sprite, entry.getKey(), new PerspectiveModelState(ImmutableMap.of()), element.rotation, element.shade, AdorableArmory.path("dynamic")));
+            if (AdorableArmoryShaders.camYaw != null && AdorableArmoryShaders.camPitch != null) {
+                AdorableArmoryShaders.camYaw.set(camYaw);
+                AdorableArmoryShaders.camPitch.set(camPitch);
+            }
+            VertexConsumer buffersBuffer = buffers.getBuffer(renderType);
+
+            // Block-shaped models(3d GUI)
+            if (model.isGui3d() && isBlockContext(transformType)) {
+                List<BakedQuad> blockLayer = new ArrayList<>();
+                RandomSource random = RandomSource.create();
+                for (Direction direction : Direction.values()) {
+                    blockLayer.addAll(model.getQuads(null, direction, random));
+                }
+
+                List<TextureAtlasSprite> maskSprites = new ArrayList<>();
+                for (ResourceLocation res : maskSprite) {
+                    maskSprites.add(Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(res));
+                }
+
+                List<BakedQuad> overlayQuads = new ArrayList<>();
+                for (BakedQuad base : blockLayer) {
+                    for (TextureAtlasSprite sprite : maskSprites) {
+                        overlayQuads.add(textureQuadBestEffort(base, sprite));
                     }
                 }
+                mc.getItemRenderer().renderQuadList(pStack, buffersBuffer, overlayQuads, stack, packedLight, packedOverlay);
+            } else {
+                // Flat/sprite-layer models
+                List<TextureAtlasSprite> atlasSprite = new ArrayList<>();
+                for (ResourceLocation res : maskSprite) {
+                    atlasSprite.add(Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(res));
+                }
+
+                LinkedList<BakedQuad> quads = new LinkedList<>();
+                for (int i = 0; i < atlasSprite.size(); i++) {
+                    TextureAtlasSprite sprite = atlasSprite.get(i);
+                    List<BlockElement> unbaked = ITEM_MODEL_GENERATOR.processFrames(i, "layer" + i, sprite.contents());
+                    for (BlockElement element : unbaked) {
+                        for (Map.Entry<Direction, BlockElementFace> entry : element.faces.entrySet()) {
+                            quads.add(FACE_BAKERY.bakeQuad(element.from, element.to, entry.getValue(), sprite, entry.getKey(), new PerspectiveModelState(ImmutableMap.of()), element.rotation, element.shade, AdorableArmory.path("dynamic")));
+                        }
+                    }
+                }
+                mc.getItemRenderer().renderQuadList(pStack, buffersBuffer, quads, stack, packedLight, packedOverlay);
             }
-            mc.getItemRenderer().renderQuadList(pStack, buffersBuffer, quads, stack, packedLight, packedOverlay);
+        } finally {
+            if (!lateRender && buffers instanceof MultiBufferSource.BufferSource source) {
+                source.endBatch(renderType);
+            }
+            if (overrideStarScale) {
+                AdorableArmoryShaders.starScaleItemSaved = prevSaved;
+            }
+        }
+    }
+
+    private void uploadStarrySkyItemUniforms() {
+        if (AdorableArmoryShaders.ItemOpacity != null) {
+            AdorableArmoryShaders.ItemOpacity.set(0.50F);
+        }
+    }
+
+    private static boolean supportsLateRenderType(RenderType renderType) {
+        return renderType == AdorableArmoryShaders.COSMIC_RENDER_TYPE || renderType == AdorableArmoryShaders.COSMIC_BLOCK_RENDER_TYPE || renderType == AdorableArmoryShaders.SKY_ITEM;
+    }
+
+    private static boolean isShaderLayerReady(RenderType renderType) {
+        if (renderType == AdorableArmoryShaders.SKY_ITEM || renderType == AdorableArmoryShaders.SKY_ITEM_GUI || renderType == AdorableArmoryShaders.SKY_ITEM_AFTER_LEVEL_RENDER_TYPE || renderType == AdorableArmoryShaders.SKY_ITEM_HAND_AFTER_LEVEL_RENDER_TYPE) {
+            return AdorableArmoryShaders.starrySkyShaderItem != null;
+        }
+        return AdorableArmoryShaders.cosmicShader != null && AdorableArmoryShaders.cosmicTime != null && AdorableArmoryShaders.cosmicYaw != null && AdorableArmoryShaders.cosmicPitch != null && AdorableArmoryShaders.cosmicExternalScale != null && AdorableArmoryShaders.cosmicOpacity != null && AdorableArmoryShaders.cosmicUVs != null;
+    }
+
+    private static RenderType lateRenderType(RenderType renderType, ItemDisplayContext context) {
+        if (isFirstPersonHandContext(context)) {
+            if (renderType == AdorableArmoryShaders.SKY_ITEM) {
+                return AdorableArmoryShaders.SKY_ITEM_HAND_AFTER_LEVEL_RENDER_TYPE;
+            }
+
+            return AdorableArmoryShaders.COSMIC_HAND_AFTER_LEVEL_RENDER_TYPE;
         }
 
-        if (overrideStarScale) {
-            AdorableArmoryShaders.starScaleItemSaved = prevSaved;
+        if (renderType == AdorableArmoryShaders.SKY_ITEM) {
+            return AdorableArmoryShaders.SKY_ITEM_AFTER_LEVEL_RENDER_TYPE;
         }
+
+        return AdorableArmoryShaders.COSMIC_ITEM_AFTER_LEVEL_RENDER_TYPE;
+    }
+
+    private static boolean isFirstPersonHandContext(ItemDisplayContext context) {
+        return context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
     }
 
     private static BakedQuad textureQuadBestEffort(BakedQuad base, TextureAtlasSprite sprite) {

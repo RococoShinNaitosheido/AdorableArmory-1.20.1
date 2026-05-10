@@ -1,7 +1,7 @@
-package flu.kitten.adorablearmory.client.itemoutline;
+package flu.kitten.adorablearmory.client.compat.oculus.itemoutline;
 
 import flu.kitten.adorablearmory.AdorableArmory;
-import flu.kitten.adorablearmory.client.render.ItemShaderModCompat;
+import flu.kitten.adorablearmory.client.compat.oculus.ItemShaderModCompat;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiEvent;
@@ -20,9 +20,6 @@ public final class ItemOutlineCompatEvents {
         if (Minecraft.getInstance().screen != null) {
             return;
         }
-        // Fallback composite point for HUD frames.
-        // This avoids one-frame lag when first-person item rendering happens
-        // after AFTER_LEVEL under specific shader/optimization pipelines.
         ItemOutlinePostProcessor.compositeDeferredFirstPersonIfActive();
     }
 

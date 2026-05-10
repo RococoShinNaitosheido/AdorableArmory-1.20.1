@@ -1,4 +1,4 @@
-package flu.kitten.adorablearmory.client.itemoutline;
+package flu.kitten.adorablearmory.client.compat.oculus.itemoutline;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;

@@ -1,33 +1,86 @@
-# <span style="color:#FF6B9D">AdorableArmory-1.20.1</span>
+# AdorableArmory-1.20.1
 
-###  <span style="color:#4A90E2">版本与环境</span>
-- **Minecraft 版本**：`1.20.1`
-- **模组加载器**：`Forge`
+AdorableArmory 是一个基于 **Minecraft Forge 1.20.1** 开发的模组项目，目前主要围绕角色、武器、方块、Boss 相关效果，以及自定义渲染系统进行开发。
 
-### <span style="color:#FFB347">目前的内容</span>
-- `AdorableArmory`（模组核心）
-- `LolaBlock`（萝拉方块 / 暂命名，未来可变）
-- `薄暮恋刃`（目前只是测试武器，未来是 **斯卡蕾特·萝拉·艾莉米娅** 的主要武器）
-- `斯卡蕾特·萝拉·艾莉米娅` 刷怪蛋（Boss 刷怪蛋）
-- `真魔之弓`（斯卡蕾特·萝拉·艾莉米娅的主要武器）
-- `真魔之箭`（真魔之弓的弹药）
-- `OrePerspectiveCore`（测试物品，目前功能是透视看见地下的任何矿石。未来可完善...）
-- 更多的...
+## 版本与环境
 
-### <span style="color:#9B59B6">目前的实体</span>
-- **Boss**：`斯卡蕾特·萝拉·艾莉米娅` 刷怪蛋（RococoShin最喜欢的一位Boss，正在非常努力的设计她，目前正在缓慢制作...）
-- 以及一些技术性实体（主要用于Boss的特效和攻击）
+- Minecraft：`1.20.1`
+- Mod Loader：`Forge`
+- 客户端光影兼容测试：`Oculus` + `Embeddium`
 
-### <span style="color:#2ECC71">正在制作的特效和渲染</span>
-- 一些用于Boss的特效渲染
+## 当前内容
 
-### <span style="color:#1ABC9C">最近更新 (2026/04/28)</span>
-- 修复了描边渲染的 bug 和渲染瑕疵
-- 优化了与 Minecraft 光影（Shaders）的一些兼容性
+- `LolaBlock`：带有 Cosmic 星空渲染层的方块。
+- `ScarletLoraAlysiaEggColor`：带有 `SKY_ITEM` 星空物品渲染层的 Boss 刷怪蛋。
+- `TrueDemonBowItem`：带有自定义描边与自定义附魔 glint 渲染的武器。
+- `TrueDemonArrowItem`：TrueDemonBowItem 的箭矢物品。
+- `OrePerspectiveCore`：测试物品，用于透视显示地下矿物。
+- Boss 与技能特效系统仍在持续开发中。
 
-### <span style="color:#3498DB">目前兼容部分</span>
-- 描边支持光影模组：`Oculus`、`Embeddium`
+## 光影兼容
 
----
-### <span style="color:#E74C3C">开发者</span>
-> RococoShin正在缓慢的制作模组.... QwQ
+目前已针对 **Oculus + Embeddium** 环境进行了渲染兼容处理，并重点测试了真正开启 shaderpack 后的表现。
+
+已兼容和修复的渲染部分包括：
+
+- Cosmic 渲染层在物品、方块、第一人称、第三人称、ItemEntity、GUI 等场景下的显示。
+- `SKY_ITEM` 渲染层在非 GUI、ItemEntity、玩家手持、背包玩家模型窗口等场景下的显示。
+- Lola 方块破坏粒子的 Cosmic 渲染层。
+- 物品描边渲染在普通视角与背包玩家模型窗口中的显示。
+- 自定义附魔 glint 渲染在 Oculus shaderpack 下的兼容显示。
+- 针对部分 shaderpack 可能出现的延迟渲染、深度、混合和批处理问题进行了兼容处理。
+
+相关兼容代码已整理到：
+
+- `client/compat/oculus`
+- `client/compat/oculus/itemoutline`
+- `client/compat/oculus/glint`
+
+## Shader Layer 接口
+
+现在给任意 `Item` 添加 `Cosmic` 或 `SKY_ITEM` 渲染层时，不再需要在主类中集中注册，也不需要必须在模型 JSON 中写 `loader: adorablearmory:cosmic`。
+
+只需要让物品实现 `ShaderLayerItem`：
+
+```java
+public class MyItem extends Item implements ShaderLayerItem {
+    private static final ShaderLayerProperties SHADER_LAYER =
+            ShaderLayerProperties.cosmic(
+                    ShaderLayerModelTransform.DEFAULT_ITEM,
+                    AdorableArmory.path("item/my_mask")
+            );
+
+    @Override
+    public ShaderLayerProperties getShaderLayer(ItemStack stack) {
+        return SHADER_LAYER;
+    }
+}
+```
+
+`SKY_ITEM` 示例：
+
+```java
+ShaderLayerProperties.skyItem(
+        ShaderLayerModelTransform.DEFAULT_ITEM,
+        AdorableArmory.path("item/my_mask")
+);
+```
+
+仍然需要提供对应的 mask 贴图，例如：
+
+```text
+assets/adorablearmory/textures/item/my_mask.png
+```
+
+## 最近更新
+
+### 2026/05/10
+
+- 完成 Cosmic / SKY_ITEM 渲染层与 Oculus shaderpack 的兼容处理。
+- 修复 Lola 方块、ScarletLoraAlysiaEggColor、ItemEntity、第一人称、第三人称、GUI、背包玩家模型窗口中的多处渲染问题。
+- 修复物品描边渲染与自定义附魔 glint 渲染在 Oculus + Embeddium 下的兼容问题。
+- 新增 `ShaderLayerItem` 接口，方便开发者为任意 `Item` 一键启用 Cosmic 或 SKY_ITEM 渲染层。
+
+## 开发者
+
+RococoShin

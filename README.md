@@ -8,7 +8,7 @@
 - **模组加载器**：`Forge`
 - **光影兼容测试**：`Oculus` + `Embeddium`
 
-### 项目进度一眼看懂
+### 项目大概进度
 - **Boss 内容**：`斯卡蕾特·萝拉·艾莉米娅` 正在缓慢制作中
 - **武器内容**：`真魔之弓`、`真魔之箭` 已加入，后续还会继续完善表现
 - **方块内容**：`LolaBlock` 已加入，并带有 Cosmic 星空渲染层
@@ -43,18 +43,11 @@
 - Lola 方块破坏粒子的 Cosmic 渲染层已兼容
 - 第一人称、第三人称、ItemEntity、GUI、背包玩家模型窗口等场景已做过兼容处理
 
-### 开发者渲染接口
-- 现在给任意 `Item` 添加 `Cosmic` 或 `SKY_ITEM` 渲染层时，可以直接实现 `ShaderLayerItem`
-- 不需要再去 `AdorableArmory` 主类里集中注册
-- 只需要提供对应的 mask 贴图，例如：`assets/adorablearmory/textures/item/xxx_mask.png`
-
 ### 最近的更新... (2026/05/10)
 - 修复了描边渲染的 bug 和渲染瑕疵
 - 修复并优化了星空渲染与 Oculus shaderpack 的兼容
 - 优化了与 Minecraft 光影（Shaders）的一些兼容性
 - 整理了 Oculus 兼容相关代码结构，方便后续维护
-- 新增 `ShaderLayerItem` 接口，让开发者更方便地给 Item 开启 Cosmic / SKY_ITEM 渲染层
-
 ---
 ### 开发者
 > RococoShin 正在缓慢地制作模组.... QwQ

@@ -39,15 +39,4 @@
 
 ### 目前兼容部分（兼容光影模组 Oculus、Embeddium）
 - 描边、自定义附魔渲染兼容光影（2026/04/24）
-- Cosmic / SKY_ITEM 星空渲染兼容 Oculus shaderpack（2026/05/10）
-- Lola 方块破坏粒子的 Cosmic 渲染层已兼容
-- 第一人称、第三人称、ItemEntity、GUI、背包玩家模型窗口等场景已做过兼容处理
-
-### 最近的更新... (2026/05/10)
-- 修复了描边渲染的 bug 和渲染瑕疵
-- 修复并优化了星空渲染与 Oculus shaderpack 的兼容
-- 优化了与 Minecraft 光影（Shaders）的一些兼容性
-- 整理了 Oculus 兼容相关代码结构，方便后续维护
----
-### 开发者
-> RococoShin 正在缓慢地制作模组.... QwQ
+- Cosmic / SKY_ITEM 星空渲染兼容 Oculus shaderpack（2026/05/1

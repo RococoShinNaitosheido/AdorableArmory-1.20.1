@@ -1,3 +1,5 @@
+![AdorableArmory Logo](docs/adorablearmory_logo.png)
+
 # AdorableArmory-1.20.1
 
 > 一个正在缓慢制作中的 Minecraft Forge 1.20.1 模组。  

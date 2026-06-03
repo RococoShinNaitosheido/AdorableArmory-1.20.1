@@ -309,6 +309,26 @@ public final class AdorableArmoryShaders {
             .createCompositeState(true)
     );
 
+    public static final RenderType DIMENSIONAL_SLASH_CORE = RenderType.create("dimensional_slash_core", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 8192, false, true, RenderType.CompositeState.builder()
+            .setShaderState(RenderStateShardAccess.LIGHTNING_SHADER)
+            .setTransparencyState(RenderStateShardAccess.LIGHTNING_TRANSPARENCY)
+            .setCullState(RenderStateShardAccess.NO_CULL)
+            .setDepthTestState(RenderStateShardAccess.LEQUAL_DEPTH_TEST)
+            .setOutputState(RenderStateShardAccess.MAIN_TARGET)
+            .setWriteMaskState(RenderStateShardAccess.COLOR_WRITE)
+            .createCompositeState(false)
+    );
+
+    public static final RenderType DIMENSIONAL_SLASH_ENTITY_PIERCE = RenderType.create("dimensional_slash_entity_pierce", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 8192, false, true, RenderType.CompositeState.builder()
+            .setShaderState(RenderStateShardAccess.LIGHTNING_SHADER)
+            .setTransparencyState(RenderStateShardAccess.LIGHTNING_TRANSPARENCY)
+            .setCullState(RenderStateShardAccess.NO_CULL)
+            .setDepthTestState(RenderStateShardAccess.NO_DEPTH_TEST)
+            .setOutputState(RenderStateShardAccess.MAIN_TARGET)
+            .setWriteMaskState(RenderStateShardAccess.COLOR_WRITE)
+            .createCompositeState(false)
+    );
+
     // Item
     public static void registerCosmicShaders(RegisterShadersEvent shader) {
         shader.registerShader(CCShaderInstance.create(shader.getResourceProvider(), new ResourceLocation(MODID, "cosmic"), DefaultVertexFormat.BLOCK), instance -> {

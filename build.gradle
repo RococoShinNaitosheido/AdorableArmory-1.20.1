@@ -73,6 +73,67 @@ minecraft {
     }
 }
 
+def forgeFmlConfigDefaults = '''#Early window height
+earlyWindowHeight = 480
+#Enable forge global version checking
+versionCheck = true
+#Should we control the window. Disabling this avoids an intermittent Forge 47.3.0 early display/FMLConfig race in dev.
+earlyWindowControl = false
+#Early window framebuffer scale
+earlyWindowFBScale = 1
+#Early window provider
+earlyWindowProvider = "fmlearlywindow"
+#Early window width
+earlyWindowWidth = 854
+#Early window starts maximized
+earlyWindowMaximized = false
+#Default config path for servers
+defaultConfigPath = "defaultconfigs"
+#Disables Optimized DFU client-side - already disabled on servers
+disableOptimizedDFU = true
+#Skip specific GL versions, may help with buggy graphics card drivers
+earlyWindowSkipGLVersions = []
+#Max threads for early initialization parallelism,  -1 is based on processor count
+maxThreads = -1
+#Squir?
+earlyWindowSquir = false
+#Whether to show CPU usage stats in early window
+earlyWindowShowCPU = false
+'''
+
+tasks.register('stabilizeForgeFmlConfig') {
+    doLast {
+        def fmlConfig = file('run/config/fml.toml')
+        fmlConfig.parentFile.mkdirs()
+        if (!fmlConfig.exists()) {
+            fmlConfig.setText(forgeFmlConfigDefaults, 'UTF-8')
+            return
+        }
+
+        def text = fmlConfig.getText('UTF-8')
+        [
+                earlyWindowControl       : 'false',
+                earlyWindowSquir         : 'false',
+                earlyWindowShowCPU       : 'false',
+                earlyWindowSkipGLVersions: '[]'
+        ].each { key, value ->
+            def line = "${key} = ${value}"
+            def pattern = ~("(?m)^" + java.util.regex.Pattern.quote(key) + "\\s*=.*\$")
+            if (pattern.matcher(text).find()) {
+                text = pattern.matcher(text).replaceAll(line)
+            } else {
+                text = text.stripTrailing() + System.lineSeparator() + line + System.lineSeparator()
+            }
+        }
+        fmlConfig.setText(text, 'UTF-8')
+    }
+}
+
+tasks.matching { it.name == 'runClient' }.configureEach {
+    dependsOn tasks.named('stabilizeForgeFmlConfig')
+    jvmArgs '-Dfile.encoding=UTF-8', '-Dsun.stdout.encoding=UTF-8', '-Dsun.stderr.encoding=UTF-8'
+}
+
 mixin {
     add sourceSets.main, "${mod_id}.refmap.json"
     config "${mod_id}.mixins.json"
@@ -84,6 +145,38 @@ sourceSets.main.resources {
     srcDir 'src/generated/resources'
 }
 
+sourceSets {
+    coremodBootstrap {
+        java.setSrcDirs(['src/coremodBootstrap/java'])
+        resources.setSrcDirs(['src/coremodBootstrap/resources'])
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+def adorableArmoryCoremodDevJar = tasks.register('adorableArmoryCoremodDevJar', Jar) {
+    archiveFileName = "${mod_id}-coremod-dev.jar"
+    destinationDirectory = layout.buildDirectory.dir('coremod-dev')
+    dependsOn tasks.named('coremodBootstrapClasses')
+
+    from(sourceSets.coremodBootstrap.output)
+
+    manifest {
+        attributes([
+                'Automatic-Module-Name': "${mod_id}.coremod.dev"
+        ])
+    }
+}
+
+def installAdorableArmoryCoremodDevJar = tasks.register('installAdorableArmoryCoremodDevJar', Copy) {
+    dependsOn adorableArmoryCoremodDevJar
+    from(adorableArmoryCoremodDevJar.flatMap { it.archiveFile })
+    into layout.projectDirectory.dir('run/mods')
+}
+
+tasks.matching { ['runClient', 'runServer', 'runGameTestServer'].contains(it.name) }.configureEach {
+    dependsOn installAdorableArmoryCoremodDevJar
+}
 
 // Repositories & Dependencies
 repositories {
@@ -125,6 +218,11 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.named('jar', Jar).configure {
+    archiveClassifier.set('main')
+    exclude 'META-INF/services/cpw.mods.modlauncher.api.ITransformationService'
+    exclude 'META-INF/services/net.minecraftforge.forgespi.locating.IModLocator'
+    exclude 'flu/kitten/adorablearmory/coremod/**'
+
     manifest {
         attributes([
                 'Specification-Title'      : mod_id,
@@ -139,11 +237,42 @@ tasks.named('jar', Jar).configure {
     finalizedBy 'reobfJar'
 }
 
+def adorableArmorySingleReleaseJar = tasks.register('adorableArmorySingleReleaseJar', Jar) {
+    group = 'build'
+    description = 'Builds the single-file release jar with bootstrap coremod and embedded main mod jar.'
+    archiveFileName = "${mod_id}-${mod_version}.jar"
+    destinationDirectory = layout.buildDirectory.dir('release')
+    dependsOn tasks.named('coremodBootstrapClasses'), tasks.named('reobfJar')
+
+    from(sourceSets.coremodBootstrap.output)
+    from(tasks.named('jar', Jar).flatMap { it.archiveFile }) {
+        into 'META-INF/adorablearmory'
+        rename { 'adorablearmory-main.jar' }
+    }
+
+    manifest {
+        attributes([
+                'Automatic-Module-Name'   : "${mod_id}.bootstrap",
+                'Specification-Title'      : "${mod_id}-bootstrap",
+                'Specification-Vendor'     : mod_authors,
+                'Specification-Version'    : '1',
+                'Implementation-Title'     : "${project.name} Bootstrap",
+                'Implementation-Version'   : project.version,
+                'Implementation-Vendor'    : mod_authors,
+                'Implementation-Timestamp' : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+tasks.named('assemble').configure {
+    dependsOn adorableArmorySingleReleaseJar
+}
+
 // Publishing
 publishing {
     publications {
         register('mavenJava', MavenPublication) {
-            artifact jar
+            artifact adorableArmorySingleReleaseJar
         }
     }
     repositories {

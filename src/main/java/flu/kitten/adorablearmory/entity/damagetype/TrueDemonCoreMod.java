@@ -33,8 +33,24 @@ public final class TrueDemonCoreMod {
         return Bridging.blockTotem(self, source);
     }
 
+    public static float trueDemonActuallyHurtAmount(LivingEntity self, DamageSource source, float amount) {
+        return Bridging.actuallyHurtAmount(self, source, amount);
+    }
+
+    public static boolean trueDemonBypassDamageBlock(LivingEntity self, DamageSource source) {
+        return Bridging.bypassDamageBlock(self, source);
+    }
+
+    public static boolean trueDemonBypassEntityInvulnerability(Entity self, DamageSource source) {
+        return Bridging.bypassEntityInvulnerability(self, source);
+    }
+
     public static boolean trueDemonForgeLivingDeath(boolean canceled, LivingEntity self, DamageSource source) {
         return Bridging.forgeLivingDeath(canceled, self, source);
+    }
+
+    public static boolean trueDemonForgeLivingAttack(boolean allowed, LivingEntity self, DamageSource source, float amount) {
+        return Bridging.forgeLivingAttack(allowed, self, source, amount);
     }
 
     public static Object trueDemonDataSet(Entity entity, EntityDataAccessor<?> accessor, Object value) {
@@ -130,10 +146,32 @@ public final class TrueDemonCoreMod {
             return isCodeKill(self);
         }
 
+        private static float actuallyHurtAmount(LivingEntity self, DamageSource source, float amount) {
+            return TrueDemonDamageSource.strengthenActuallyHurtAmount(self, source, amount);
+        }
+
+        private static boolean bypassDamageBlock(LivingEntity self, DamageSource source) {
+            return TrueDemonDamageSource.shouldBypassTrueDemonDamageBlock(self, source);
+        }
+
+        private static boolean bypassEntityInvulnerability(Entity self, DamageSource source) {
+            return TrueDemonDamageSource.shouldBypassTrueDemonInvulnerability(self, source);
+        }
+
         private static boolean forgeLivingDeath(boolean canceled, LivingEntity self, DamageSource source) {
             if (!isCodeKill(self)) return canceled;
             debug("[TrueDemonCoreMod] ignore canceled LivingDeathEvent: {}", self);
             return false;
+        }
+
+        private static boolean forgeLivingAttack(boolean allowed, LivingEntity self, DamageSource source, float amount) {
+            if (TrueDemonDamageSource.shouldBlockTrueDemonAttack(self, source)) {
+                debug("[TrueDemonCoreMod] block protected-player LivingAttackEvent: {} amount {}", self, amount);
+                return false;
+            }
+            if (!TrueDemonDamageSource.shouldForceTrueDemonAttack(self, source)) return allowed;
+            debug("[TrueDemonCoreMod] force LivingAttackEvent through: {} amount {}", self, amount);
+            return true;
         }
 
         private static Object dataSet(Entity entity, EntityDataAccessor<?> accessor, Object value) {

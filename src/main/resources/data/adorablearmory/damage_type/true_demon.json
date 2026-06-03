@@ -1,7 +1,7 @@
 {
   "message_id": "true_demon",
   "exhaustion": 0.16,
-  "scaling": "when_caused_by_living_non_player",
+  "scaling": "never",
   "effects": "hurt",
   "death_message_type": "default"
 }

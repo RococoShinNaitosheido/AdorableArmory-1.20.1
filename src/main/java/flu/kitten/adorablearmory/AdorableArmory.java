@@ -68,4 +68,6 @@ public class AdorableArmory {
             AdorableArmory.LOGGER.info("Registered custom boss bar renderer");
         });
     }
+
+    // Export formal Jar- .\gradlew.bat adorableArmorySingleReleaseJar --console=plain
 }

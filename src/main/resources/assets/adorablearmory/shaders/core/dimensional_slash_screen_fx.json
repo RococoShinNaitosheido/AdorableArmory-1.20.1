@@ -1,0 +1,33 @@
+{
+  "vertex": "adorablearmory:dimensional_slash_fullscreen",
+  "fragment": "adorablearmory:dimensional_slash_screen_fx",
+  "attributes": [ "Position", "UV0" ],
+  "samplers": [
+    { "name": "DiffuseSampler" }
+  ],
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "TexelSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+    { "name": "Progress", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Time", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "ChromaStrength", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "ChromaPull", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "UomStrength", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "UomRate", "type": "float", "count": 1, "values": [ 8.0 ] },
+    { "name": "UomEdgeWeight", "type": "float", "count": 1, "values": [ 0.7 ] },
+    { "name": "UomContrast", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "UomContraction", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "UomRadialBlur", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "UomBlurThreshold", "type": "float", "count": 1, "values": [ 0.4 ] },
+    { "name": "UomBeamIntensity", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "UomThresholdStrength", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "UomCenterFlash", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "UomInvertStrobe", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "UomMonoStrobe", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "UomWhiteFlash", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "UomVignetteStrength", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "EdgeStart", "type": "float", "count": 1, "values": [ 0.1 ] },
+    { "name": "EdgeEnd", "type": "float", "count": 1, "values": [ 1.0 ] }
+  ]
+}

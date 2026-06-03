@@ -1,0 +1,44 @@
+{
+  "blend": {
+    "func": "add", "srcrgb": "one", "dstrgb": "zero"
+  },
+
+  "depth": {
+    "func": "always", "write": false
+  },
+
+  "vertex": "adorablearmory:sobel",
+  "fragment": "adorablearmory:dimensional_slash_break",
+  "attributes": [ "Position" ],
+
+  "samplers": [
+    { "name": "DiffuseSampler" }
+  ],
+
+  "uniforms": [
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0,0.0,0.0,0.0,  0.0,1.0,0.0,0.0,  0.0,0.0,1.0,0.0,  0.0,0.0,0.0,1.0 ] },
+    { "name": "InSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+    { "name": "OutSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+
+    { "name": "Amount", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Life", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "BreakTime", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Seed", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Flash", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Center", "type": "float", "count": 2, "values": [ 0.5, 0.5 ] },
+    { "name": "ShardCells", "type": "float", "count": 1, "values": [ 42.0 ] },
+    { "name": "ShardMove", "type": "float", "count": 1, "values": [ 3.15 ] },
+    { "name": "GapWidth", "type": "float", "count": 1, "values": [ 1.05 ] },
+    { "name": "GapDarkness", "type": "float", "count": 1, "values": [ 0.18 ] },
+    { "name": "RefractionStrength", "type": "float", "count": 1, "values": [ 3.25 ] },
+    { "name": "FragmentTint", "type": "float", "count": 1, "values": [ 0.12 ] },
+    { "name": "EdgeVisibility", "type": "float", "count": 1, "values": [ 0.22 ] },
+    { "name": "SparkStrength", "type": "float", "count": 1, "values": [ 0.18 ] },
+    { "name": "FlashContrast", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "FlashFill", "type": "float", "count": 1, "values": [ 0.20 ] },
+    { "name": "CrackVisibility", "type": "float", "count": 1, "values": [ 0.62 ] },
+    { "name": "ExitStart", "type": "float", "count": 1, "values": [ 0.62 ] },
+    { "name": "ExitShardMove", "type": "float", "count": 1, "values": [ 7.20 ] },
+    { "name": "ExitFlash", "type": "float", "count": 1, "values": [ 0.52 ] }
+  ]
+}

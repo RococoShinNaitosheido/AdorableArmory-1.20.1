@@ -205,6 +205,28 @@ function initializeCoreMod() {
             }
         },
 
+        "AA_ForgeHooks_onLivingAttack_hook": {
+            "target": {
+                "type": "METHOD",
+                "class": "net.minecraftforge.common.ForgeHooks",
+                "methodName": "onLivingAttack",
+                "methodDesc": "(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/damagesource/DamageSource;F)Z"
+            },
+            "transformer": function(methodNode) {
+                return wrapReturns(
+                    methodNode,
+                    Opcodes.IRETURN,
+                    "trueDemonForgeLivingAttack",
+                    "(ZLnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/damagesource/DamageSource;F)Z",
+                    function(insn) {
+                        insn.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        insn.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        insn.add(new VarInsnNode(Opcodes.FLOAD, 2));
+                    }
+                );
+            }
+        },
+
         "AA_SynchedEntityData_set_fallback_hook": {
             "target": {
                 "type": "METHOD",

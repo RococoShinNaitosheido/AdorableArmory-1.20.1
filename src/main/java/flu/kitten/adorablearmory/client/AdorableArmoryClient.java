@@ -5,6 +5,9 @@ import flu.kitten.adorablearmory.client.model.CosmicModelLoader;
 import flu.kitten.adorablearmory.client.model.HaloModelLoader;
 import flu.kitten.adorablearmory.client.model.ScarletLoraAlysiaModel;
 import flu.kitten.adorablearmory.client.render.*;
+import flu.kitten.adorablearmory.client.render.dimensional.DimensionalSlashBloomRenderer;
+import flu.kitten.adorablearmory.client.render.dimensional.DimensionalSlashScreenShader;
+import flu.kitten.adorablearmory.client.render.dimensional.DimensionalSlashWorldShardRenderer;
 import flu.kitten.adorablearmory.client.render.particle.TrueDemonParticle;
 import flu.kitten.adorablearmory.client.shader.AdorableArmoryShaders;
 import flu.kitten.adorablearmory.entity.effect.entityrender.TrueDemonBlackHoleRender;
@@ -38,6 +41,11 @@ public class AdorableArmoryClient {
         // location particle shader
         event.registerShader(new ShaderInstance(event.getResourceProvider(), particleLocation, DefaultVertexFormat.PARTICLE), shader -> AdorableArmoryClient.trueDemonParticleShader = shader);
         event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(MODID, "black_hole_lens"), DefaultVertexFormat.POSITION_TEX), BlackHoleLensClient::shaderLoaded);
+        event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(MODID, "screen_glass_shard"), DefaultVertexFormat.POSITION_COLOR_TEX), DimensionalSlashScreenShader::shaderLoaded);
+        event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(MODID, "dimensional_slash_blur"), DefaultVertexFormat.POSITION_TEX), DimensionalSlashBloomRenderer::blurShaderLoaded);
+        event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(MODID, "dimensional_slash_composite"), DefaultVertexFormat.POSITION_TEX), DimensionalSlashBloomRenderer::compositeShaderLoaded);
+        event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(MODID, "dimensional_slash_screen_fx"), DefaultVertexFormat.POSITION_TEX), DimensionalSlashScreenShader::screenFxShaderLoaded);
+        event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(MODID, "dimensional_slash_world_shard"), DefaultVertexFormat.NEW_ENTITY), DimensionalSlashWorldShardRenderer::shaderLoaded);
     }
 
     @SubscribeEvent

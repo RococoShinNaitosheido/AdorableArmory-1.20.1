@@ -1,0 +1,18 @@
+{
+  "vertex": "adorablearmory:dimensional_slash_world_shard",
+  "fragment": "adorablearmory:dimensional_slash_world_shard",
+  "attributes": [ "Position", "Color", "UV0", "UV2", "Normal" ],
+  "samplers": [
+    { "name": "SceneTex" }
+  ],
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ScreenSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+    { "name": "TexelSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+    { "name": "RefractionStrength", "type": "float", "count": 1, "values": [ 7.0 ] },
+    { "name": "EdgeStrength", "type": "float", "count": 1, "values": [ 0.72 ] },
+    { "name": "MirrorStrength", "type": "float", "count": 1, "values": [ 0.78 ] },
+    { "name": "Time", "type": "float", "count": 1, "values": [ 0.0 ] }
+  ]
+}

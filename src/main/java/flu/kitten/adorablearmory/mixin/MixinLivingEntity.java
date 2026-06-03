@@ -2,6 +2,7 @@ package flu.kitten.adorablearmory.mixin;
 
 import flu.kitten.adorablearmory.api.duck.ITrueDemonExecutionTarget;
 import flu.kitten.adorablearmory.entity.damagetype.TrueDemonDamageSource;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,10 +38,10 @@ public abstract class MixinLivingEntity implements ITrueDemonExecutionTarget {
             }
             target.invulnerableTime = 0;
             if (!target.isRemoved() && !target.level().isClientSide) {
-                if (!target.isDeadOrDying()) {
-                    target.die(TrueDemonDamageSource.causeTrueDemonDamage(target.level(), null));
+                target.die(TrueDemonDamageSource.causeTrueDemonDamage(target.level(), null));
+                if (!(target instanceof ServerPlayer)) {
+                    target.remove(Entity.RemovalReason.KILLED);
                 }
-                target.remove(Entity.RemovalReason.KILLED);
             }
         }
     }

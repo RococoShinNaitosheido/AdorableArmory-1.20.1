@@ -1,0 +1,21 @@
+{
+  "vertex": "adorablearmory:screen_glass_shard",
+  "fragment": "adorablearmory:screen_glass_shard",
+  "attributes": [ "Position", "Color", "UV0" ],
+
+  "samplers": [
+    { "name": "SceneTex" },
+    { "name": "LiveSceneTex" }
+  ],
+
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 ] },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 ] },
+    { "name": "ScreenSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+    { "name": "TexelSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+    { "name": "Progress", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "ChromaStrength", "type": "float", "count": 1, "values": [ 3.25 ] },
+    { "name": "EdgeVisibility", "type": "float", "count": 1, "values": [ 0.22 ] },
+    { "name": "MirrorStrength", "type": "float", "count": 1, "values": [ 1.0 ] }
+  ]
+}

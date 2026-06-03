@@ -32,6 +32,7 @@ public final class NetworkHandler {
         CHANNEL.registerMessage(nextId(), ShakeS2CPacket.class, ShakeS2CPacket::encode, ShakeS2CPacket::decode, ShakeS2CPacket::handle);
         CHANNEL.registerMessage(nextId(), VisualToggleS2CPacket.class, VisualToggleS2CPacket::encode, VisualToggleS2CPacket::decode, VisualToggleS2CPacket::handle);
         CHANNEL.registerMessage(nextId(), BarrierSyncS2CPacket.class, BarrierSyncS2CPacket::encode, BarrierSyncS2CPacket::decode, BarrierSyncS2CPacket::handle);
+        CHANNEL.registerMessage(nextId(), DimensionalSlashS2CPacket.class, DimensionalSlashS2CPacket::encode, DimensionalSlashS2CPacket::decode, DimensionalSlashS2CPacket::handle);
         CHANNEL.registerMessage(nextId(), PacketSyncTrueDemonMark.class, PacketSyncTrueDemonMark::toBytes, PacketSyncTrueDemonMark::new, PacketSyncTrueDemonMark::handle);
         CHANNEL.messageBuilder(S2CSetDemonArrowStuckCount.class, id++, NetworkDirection.PLAY_TO_CLIENT).encoder(S2CSetDemonArrowStuckCount::encode).decoder(S2CSetDemonArrowStuckCount::decode).consumerMainThread(S2CSetDemonArrowStuckCount::handle).add();
 
